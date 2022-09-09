@@ -32,10 +32,8 @@ const authenticateUser = async (req, res) => {
 };
 
 const signInWithGoogle = async (req, res) => {
-  console.log("request recieved", req.body);
-  // Check if this user exists
   let user = await User.findOne({ email: req.body.email });
-  console.log(user);
+
   if (user && user.oauthId) {
     const token = user.generateAuthToken();
     return res.status(200).send({ token });
@@ -56,7 +54,13 @@ const signInWithGoogle = async (req, res) => {
       oauthId: req.body.oauthId,
       profilePic: req.body.profilePic,
     });
-    const result = await user.save();
+    console.log(user);
+    try {
+      const result = await user.save();
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
     const token = user.generateAuthToken();
     return res.status(200).send({ token });
   }
