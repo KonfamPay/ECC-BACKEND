@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
+const { string } = require("joi");
 require("dotenv").config();
 
 const userSchema = new mongoose.Schema(
@@ -39,6 +40,51 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    dob: {
+      required: false,
+      type: Date,
+    },
+    phoneNumber: {
+      required: false,
+      type: String,
+      default: "",
+      length: 11,
+    },
+    state: {
+      maxlength: 30,
+      required: false,
+      type: String,
+    },
+    lga: {
+      maxlength: 50,
+      required: false,
+      type: String,
+      default: "",
+    },
+    address: {
+      maxlength: 255,
+      required: false,
+      type: String,
+      default: "",
+    },
+    photoId: {
+      url: {
+        type: String,
+        required: false,
+        maxlength: 255,
+        default: "",
+      },
+      cloudinaryId: {
+        type: String,
+        required: false,
+        maxlength: 255,
+        default: "",
+      },
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -52,6 +98,13 @@ userSchema.methods.generateAuthToken = function () {
       email: this.email,
       profilePic: this.profilePic,
       createdAt: this.createdAt,
+      dob: this.dob,
+      phoneNumber: this.phoneNumber,
+      state: this.state ? this.state : "",
+      lga: this.lga,
+      address: this.address,
+      photoId: this.photoId,
+      verified: this.verified,
     },
     process.env.JWT_PRIVATE_KEY
   );
@@ -75,4 +128,20 @@ const validateUser = (user) => {
   return schema.validate(user);
 };
 
-module.exports = { User, validateUser };
+const validateVerifyInputs = (payload) => {
+  const schema = Joi.object({
+    phoneNumber: Joi.string()
+      .regex(/^[0-9]{11}$/)
+      .length(11)
+      .label("Phone Number")
+      .required(),
+    dob: Joi.string().required().label("Date of Birth").length(10),
+    state: Joi.string().max(30).min(3).required().label("State"),
+    lga: Joi.string().max(50).min(3).required().label("Local Government Area"),
+    address: Joi.string().max(255).min(10).required().label("Address"),
+    photoIdUrl: Joi.string().required().label("Photo Id"),
+  });
+  return schema.validate(payload);
+};
+
+module.exports = { User, validateUser, validateVerifyInputs };
