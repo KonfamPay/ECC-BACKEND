@@ -8,20 +8,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendMail = (email, subject, message) => {
+const sendMail = (email, subject, message, cb = () => {}) => {
   const mailOptions = {
     from: "ECC",
     to: email,
     subject,
     text: message,
   };
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      throw new Error(err.message);
-    } else {
-      return "Email Sent " + info.response;
-    }
-  });
+  let result;
+  transporter.sendMail(mailOptions, cb);
 };
 
 module.exports = {

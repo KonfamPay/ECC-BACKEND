@@ -1,8 +1,13 @@
 const express = require("express");
-const router = express.Router();
-const { createNewUser, verifyUser } = require("../controllers/users");
+const usersRouter = express.Router();
+const {
+  createNewUser,
+  verifyAccount,
+  verifyUserEmail,
+} = require("../controllers/users");
 
-router.post("/", createNewUser);
-router.post("/verify/:id", verifyUser);
+usersRouter.post("/", createNewUser);
+usersRouter.post("/verify/:id", verifyAccount);
+usersRouter.post("/verify_email/:id", verifyUserEmail);
 
-module.exports = router;
+module.exports = usersRouter;

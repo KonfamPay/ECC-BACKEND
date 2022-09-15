@@ -6,13 +6,13 @@ const {
   googleSignInSuccessful,
   googleSignInFailed,
 } = require("../controllers/auth");
-const router = express.Router();
+const authRouter = express.Router();
 
-router.post("/", authenticateUser);
-router.post("/google", signInWithGoogle);
-router.get("/google/callback", googleCallback, googleSignInSuccessful);
-router.get("/failed", googleSignInFailed);
-router.get("/google/start", (req, res) => {
+authRouter.post("/", authenticateUser);
+authRouter.post("/google", signInWithGoogle);
+authRouter.get("/google/callback", googleCallback, googleSignInSuccessful);
+authRouter.get("/failed", googleSignInFailed);
+authRouter.get("/google/start", (req, res) => {
   res.redirect("/api/auth/google");
 });
-module.exports = router;
+module.exports = authRouter;

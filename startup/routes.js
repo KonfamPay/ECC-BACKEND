@@ -4,6 +4,7 @@ const forgotPassword = require("../routes/forgot-password");
 const resetPassword = require("../routes/reset-password");
 const error = require("../middleware/error");
 const image = require("../routes/image");
+const complaints = require("../routes/complaint");
 
 module.exports = (app) => {
   app.use("/api/users", users);
@@ -11,6 +12,7 @@ module.exports = (app) => {
   app.use("/api/forgot-password", forgotPassword);
   app.use("/api/reset-password", resetPassword);
   app.use("/api/image", image);
+  app.use("/api/complaints", complaints);
   app.get("*", (req, res) => {
     res.sendStatus(404);
   });

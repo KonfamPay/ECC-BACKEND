@@ -4,10 +4,10 @@ const {
   handleResetPassword,
 } = require("../controllers/reset-password");
 
-const router = express.Router();
+const resetPasswordRouter = express.Router();
 
-router.get("/:id/:token", renderResetPasswordPage);
+resetPasswordRouter.get("/:id/:token", renderResetPasswordPage);
 
-router.post("/:id/:token", handleResetPassword);
+resetPasswordRouter.post("/:id/:token", handleResetPassword);
 
-module.exports = router;
+module.exports = resetPasswordRouter;

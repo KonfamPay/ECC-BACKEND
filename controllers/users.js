@@ -5,6 +5,8 @@ const {
   validateVerifyInputs,
 } = require("../models/user");
 const mongoose = require("mongoose");
+const { sendMail } = require("../utils/node-mailer-transport");
+const { EmailCode, validateEmailCode } = require("../models/emailCode");
 
 const createNewUser = async (req, res) => {
   const { error } = validate(req.body);
@@ -21,12 +23,27 @@ const createNewUser = async (req, res) => {
   console.log(req.body.password, password);
   const { firstName, lastName, email } = req.body;
   user = new User({ firstName, lastName, email, password });
-  const result = await user.save();
+  await user.save();
+
+  // Generate code to send to email
+  const code = Math.floor(1000 + Math.random() * 9000).toString();
+  const emailCode = new EmailCode({ code, userId: user._id });
+  const result = await emailCode.save();
+  console.log(emailCode);
+  sendMail(
+    email,
+    (subject = "Verify your Email Address"),
+    (message = `Use this code to verify your email address: ${code}`),
+    (err, info) => {
+      if (err) throw new Error("Email failed to send");
+    }
+  );
+  console.log(user);
   const token = user.generateAuthToken();
   res.status(201).json({ token });
 };
 
-const verifyUser = async (req, res) => {
+const verifyAccount = async (req, res) => {
   const { id } = req.params;
   if (!id)
     return res
@@ -74,4 +91,43 @@ const verifyUser = async (req, res) => {
   res.status(200).json({ token: newToken });
 };
 
-module.exports = { createNewUser, verifyUser };
+const verifyUserEmail = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(400).json({ message: "This Id is not valid!" });
+
+  const user = await User.findById(id);
+  if (!user)
+    return res.status(404).json({ message: "This user does not exist!" });
+
+  if (user.emailVerified)
+    return res
+      .status(400)
+      .json({ message: "This email has already been verified" });
+
+  let emailCode = await EmailCode.findOne({ userId: id });
+
+  if (!emailCode)
+    return res
+      .status(400)
+      .json({ message: "Please request for another code!" });
+
+  const { code } = req.body;
+
+  const { error } = validateEmailCode({ code });
+
+  if (error) return res.status(400).send(error.details[0].message);
+
+  if (emailCode.code !== code)
+    return res
+      .status(422)
+      .json({ message: "This code is incorrect, please try again" });
+
+  user.emailVerified = true;
+  await user.save();
+
+  await EmailCode.deleteOne({ userId: id });
+  return res.status(200).json({ message: "Email verified successfully!" });
+};
+
+module.exports = { createNewUser, verifyAccount, verifyUserEmail };
