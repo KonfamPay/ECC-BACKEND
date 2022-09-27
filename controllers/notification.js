@@ -23,7 +23,7 @@ const getAllNotifications = async (req, res) => {
 };
 
 class NotificationService {
-  create = async (notificationPayload) => {
+  sendNotification = async (notificationPayload) => {
     const { error } = validateNotification(notificationPayload);
     if (error) throw new Error(error.details[0].message);
     const notification = new Notification(notificationPayload);
