@@ -8,13 +8,13 @@ const userSchema = new mongoose.Schema(
     firstName: {
       minlength: 2,
       maxlength: 50,
-      required: true,
+      required: false,
       type: String,
     },
     lastName: {
       minlength: 2,
       maxlength: 50,
-      required: true,
+      required: false,
       type: String,
     },
     email: {
@@ -120,8 +120,6 @@ const User = mongoose.model("User", userSchema);
 // Function for validating before persisting anything to the db
 const validateUser = (user) => {
   const schema = Joi.object({
-    firstName: Joi.string().min(2).max(50).required().label("First Name"),
-    lastName: Joi.string().min(2).max(50).required().label("Last Name"),
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: false } })
       .min(3)
@@ -139,6 +137,8 @@ const validateVerifyInputs = (payload) => {
       .length(11)
       .label("Phone Number")
       .required(),
+    firstName: Joi.string().min(2).max(50).required().label("First Name"),
+    lastName: Joi.string().min(2).max(50).required().label("Last Name"),
     dob: Joi.string().required().label("Date of Birth").length(10),
     state: Joi.string().max(30).min(3).required().label("State"),
     lga: Joi.string().max(50).min(3).required().label("Local Government Area"),
