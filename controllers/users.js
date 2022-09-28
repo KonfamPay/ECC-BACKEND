@@ -21,8 +21,8 @@ const createNewUser = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const password = await bcrypt.hash(req.body.password, salt);
   console.log(req.body.password, password);
-  const { firstName, lastName, email } = req.body;
-  user = new User({ firstName, lastName, email, password });
+  const { email } = req.body;
+  user = new User({ email, password });
   await user.save();
 
   // Generate code to send to email
@@ -66,6 +66,8 @@ const verifyAccount = async (req, res) => {
   const { dob, phoneNumber, address, lga, state, photoId } = req.body;
 
   const { error } = validateVerifyInputs({
+    firstName,
+    lastName,
     dob,
     phoneNumber,
     address,
