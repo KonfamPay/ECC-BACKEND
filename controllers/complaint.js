@@ -92,7 +92,34 @@ const getAllComplaintsByAUser = async (req, res) => {
   return res.status(200).send(complaints);
 };
 
+const getComplaintNumbers = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(userId))
+    return res.status(400).json({ message: "This userId is not valid" });
+
+  let user = await User.findById(userId);
+
+  if (!user)
+    return res
+      .status(404)
+      .json({ message: "This user does not exist in our database" });
+
+  const pendingNumber = Complaint.find({ status: "pending" }).count();
+  const openNumber = Complaint.find({ status: "open" }).count();
+  const resolvedNumber = Complaint.find({ status: "resolved" }).count();
+  const closedNumber = Complaint.find({ status: "closed" });
+
+  return res.status(200).json({
+    pending: pendingNumber,
+    open: openNumber,
+    resolved: resolvedNumber,
+    closed: closedNumber,
+  });
+};
+
 module.exports = {
   createNewComplaint,
   getAllComplaintsByAUser,
+  getComplaintNumbers,
 };
