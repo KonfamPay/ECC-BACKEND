@@ -23,19 +23,19 @@ const getAllNotifications = async (req, res) => {
 };
 
 class NotificationService {
-  sendNotification = async (notificationPayload) => {
+  static async sendNotification(notificationPayload) {
     const { error } = validateNotification(notificationPayload);
     if (error) throw new Error(error.details[0].message);
     const notification = new Notification(notificationPayload);
     return await notification.save();
-  };
+  }
 
-  markAsRead = async (notificationId) => {
+  static async markAsRead(notificationId) {
     const notification = await Notification.findById(notificationId);
     if (!notification) throw new Error("This notification does not exist!");
     notification.status = "read";
     await notification.save();
-  };
+  }
 }
 
 module.exports = { getAllNotifications, NotificationService };

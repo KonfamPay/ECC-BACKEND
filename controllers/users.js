@@ -144,17 +144,18 @@ const verifyUserEmail = async (req, res) => {
       .status(422)
       .json({ message: "This code is incorrect, please try again" });
 
+  await NotificationService.sendNotification({
+    userId: user._id,
+    title: "Email Verified Successfully",
+    message:
+      "You have successfully verified your email. File a complaint and let's help you resolve it!",
+    type: "account",
+  });
   user.emailVerified = true;
   await user.save();
 
   await EmailCode.deleteOne({ userId: id });
 
-  NotificationService.sendNotification({
-    userId: user._id,
-    title: "Email Verified Successfully",
-    message:
-      "You have successfully verified your email. File a complaint and let's help you resolve it!",
-  });
   return res.status(200).json({ message: "Email verified successfully!" });
 };
 
