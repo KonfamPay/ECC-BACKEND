@@ -7,6 +7,7 @@ const {
 const mongoose = require("mongoose");
 const { sendMail } = require("../utils/node-mailer-transport");
 const { EmailCode, validateEmailCode } = require("../models/emailCode");
+const { NotificationService } = require("./notification");
 
 const createNewUser = async (req, res) => {
   const { error } = validate(req.body);
@@ -30,17 +31,24 @@ const createNewUser = async (req, res) => {
   const emailCode = new EmailCode({ code, userId: user._id });
   const result = await emailCode.save();
   console.log(emailCode);
-  sendMail(
-    email,
-    (subject = "Verify your Email Address"),
-    (message = `Use this code to verify your email address: ${code}`),
-    (err, info) => {
-      if (err) throw new Error("Email failed to send");
-    }
-  );
-  console.log(user);
-  const token = user.generateAuthToken();
-  res.status(201).json({ token });
+  try {
+    sendMail(
+      email,
+      (subject = "Verify your Email Address"),
+      (message = `Use this code to verify your email address: ${code}`),
+      (res) => {
+        return (err, info) => {
+          if (err) throw new Error("Email failed to send");
+          console.log(user);
+          const token = user.generateAuthToken();
+          res.status(201).json({ token });
+        };
+      },
+      res
+    );
+  } catch (err) {
+    return res.status(500).json({ message: "Email failed to send" });
+  }
 };
 
 const verifyAccount = async (req, res) => {
@@ -63,7 +71,16 @@ const verifyAccount = async (req, res) => {
       .status(400)
       .send({ message: "This user has already been verified!" });
 
-  const { dob, phoneNumber, address, lga, state, photoId } = req.body;
+  const {
+    firstName,
+    lastName,
+    dob,
+    phoneNumber,
+    address,
+    lga,
+    state,
+    photoId,
+  } = req.body;
 
   const { error } = validateVerifyInputs({
     firstName,
@@ -78,6 +95,8 @@ const verifyAccount = async (req, res) => {
 
   if (error) return res.status(400).send({ message: error.details[0].message });
 
+  user.firstName = firstName;
+  user.lastName = lastName;
   user.dob = dob;
   user.phoneNumber = phoneNumber;
   user.address = address;
@@ -129,6 +148,13 @@ const verifyUserEmail = async (req, res) => {
   await user.save();
 
   await EmailCode.deleteOne({ userId: id });
+
+  NotificationService.sendNotification({
+    userId: user._id,
+    title: "Email Verified Successfully",
+    message:
+      "You have successfully verified your email. File a complaint and let's help you resolve it!",
+  });
   return res.status(200).json({ message: "Email verified successfully!" });
 };
 
