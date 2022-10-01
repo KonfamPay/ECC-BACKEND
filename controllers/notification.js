@@ -29,6 +29,13 @@ class NotificationService {
     const notification = new Notification(notificationPayload);
     return await notification.save();
   };
+
+  markAsRead = async (notificationId) => {
+    const notification = await Notification.findById(notificationId);
+    if (!notification) throw new Error("This notification does not exist!");
+    notification.status = "read";
+    await notification.save();
+  };
 }
 
 module.exports = { getAllNotifications, NotificationService };
