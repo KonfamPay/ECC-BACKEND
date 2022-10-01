@@ -105,10 +105,10 @@ const getComplaintNumbers = async (req, res) => {
       .status(404)
       .json({ message: "This user does not exist in our database" });
 
-  const pendingNumber = Complaint.find({ status: "pending" }).count();
-  const openNumber = Complaint.find({ status: "open" }).count();
-  const resolvedNumber = Complaint.find({ status: "resolved" }).count();
-  const closedNumber = Complaint.find({ status: "closed" });
+  const pendingNumber = await Complaint.find({ status: "pending" }).count();
+  const openNumber = await Complaint.find({ status: "open" }).count();
+  const resolvedNumber = await Complaint.find({ status: "resolved" }).count();
+  const closedNumber = await Complaint.find({ status: "closed" }).count();
 
   return res.status(200).json({
     pending: pendingNumber,
