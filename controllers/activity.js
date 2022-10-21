@@ -27,12 +27,12 @@ const createNewActivity = async (req, res) => {
 	res.status(200).json(result);
 };
 
-const getAllActivities = async (req, res) => {
+const getAllActivity = async (req, res) => {
 	const activities = await Activity.find({});
 	return res.status(200).send(activities);
 };
 
 module.exports = {
 	createNewActivity,
-	getAllActivities,
+	getAllActivity,
 };
