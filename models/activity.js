@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-require("dotenv").config();
 
 const activitySchema = new mongoose.Schema(
 	{

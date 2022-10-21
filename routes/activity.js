@@ -1,13 +1,11 @@
 const express = require("express");
-const usersRouter = express.Router();
+const activitiesRouter = express.Router();
 const {
-  createNewUser,
-  verifyAccount,
-  verifyUserEmail,
-} = require("../controllers/users");
+	createNewActivity,
+	getAllActivities,
+} = require("../controllers/activity");
 
-usersRouter.post("/", createNewUser);
-usersRouter.post("/verify/:id", verifyAccount);
-usersRouter.post("/verify_email/:id", verifyUserEmail);
+activitiesRouter.post("/", createNewActivity);
+activitiesRouter.get("/", getAllActivities);
 
-module.exports = usersRouter;
+module.exports = activitiesRouter;
