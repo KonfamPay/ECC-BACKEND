@@ -8,13 +8,16 @@ const createNewActivity = async (req, res) => {
 	if (!mongoose.Types.ObjectId.isValid(adminId))
 		return res.status(400).json({ message: "This adminId is not valid" });
 
-	let user = await User.findById(adminId);
-	if (!user)
+	let admin = await User.findById(adminId);
+	if (!admin)
 		return res
 			.status(404)
 			.json({ message: "This user does not exist in our database" });
-
-	const { error } = validateComplaint({
+	if (!username || !grevianceId)
+		return res
+			.status(400)
+			.json({ message: "A username or grevianceId is needed" });
+	const { error } = validateActivity({
 		adminId,
 		actionType,
 		action_done,
