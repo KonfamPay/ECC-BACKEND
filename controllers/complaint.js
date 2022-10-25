@@ -2,6 +2,11 @@ const { User } = require("../models/user");
 const mongoose = require("mongoose");
 const { Complaint, validateComplaint } = require("../models/complaint");
 
+const getAllComplaints = async (req, res) => {
+  const complaints = await Complaint.find({});
+  return res.status(200).send(complaints);
+};
+
 const createNewComplaint = async (req, res) => {
   const {
     userId,
@@ -119,6 +124,7 @@ const getComplaintNumbers = async (req, res) => {
 };
 
 module.exports = {
+  getAllComplaints,
   createNewComplaint,
   getAllComplaintsByAUser,
   getComplaintNumbers,
