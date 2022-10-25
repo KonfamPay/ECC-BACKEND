@@ -1,9 +1,9 @@
 const express = require("express");
 const {
-  getAllComplaints,
-  createNewComplaint,
-  getAllComplaintsByAUser,
-  getComplaintNumbers,
+	getAllComplaints,
+	createNewComplaint,
+	getAllComplaintsByAUser,
+	getComplaintNumbers,
 } = require("../controllers/complaint");
 const complaintRouter = express.Router();
 
