@@ -35,7 +35,7 @@ const createNewUser = async (req, res) => {
     sendMail(
       email,
       (subject = "Verify your Email Address"),
-      (message = `Use this code to verify your email address: ${code}`),
+      (message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1>`),
       (res) => {
         return (err, info) => {
           if (err) throw new Error("Email failed to send");
@@ -79,7 +79,7 @@ const verifyAccount = async (req, res) => {
     address,
     lga,
     state,
-    photoId,
+    // photoId,
   } = req.body;
 
   const { error } = validateVerifyInputs({
@@ -90,7 +90,7 @@ const verifyAccount = async (req, res) => {
     address,
     lga,
     state,
-    photoIdUrl: photoId.url,
+    // photoIdUrl: photoId.url,
   });
 
   if (error) return res.status(400).send({ message: error.details[0].message });
@@ -102,7 +102,7 @@ const verifyAccount = async (req, res) => {
   user.address = address;
   user.lga = lga;
   user.state = state;
-  user.photoId = photoId;
+  // user.photoId = photoId;
 
   user.verified = true;
   await user.save();
@@ -137,12 +137,10 @@ const verifyUserEmail = async (req, res) => {
 
   const { error } = validateEmailCode({ code });
 
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   if (emailCode.code !== code)
-    return res
-      .status(422)
-      .json({ message: "This code is incorrect, please try again" });
+    return res.status(422).json({ message: "You have entered a wrong code" });
 
   await NotificationService.sendNotification({
     userId: user._id,
@@ -155,8 +153,53 @@ const verifyUserEmail = async (req, res) => {
   await user.save();
 
   await EmailCode.deleteOne({ userId: id });
+  const token = user.generateAuthToken();
 
-  return res.status(200).json({ message: "Email verified successfully!" });
+  return res
+    .status(200)
+    .json({ message: "Email verified successfully!", token });
 };
 
-module.exports = { createNewUser, verifyAccount, verifyUserEmail };
+const resendVerifyEmailCode = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(400).json({ message: "This Id is not valid!" });
+
+  const user = await User.findById(id);
+  if (!user)
+    return res.status(404).json({ message: "This user does not exist!" });
+
+  let emailCode = await EmailCode.findOne({ userId: id });
+  if (emailCode) await EmailCode.deleteOne({ userId: id });
+
+  // Generate the code to send to the user
+  const code = Math.floor(1000 + Math.random() * 9000).toString();
+  emailCode = new EmailCode({ code, userId: user._id });
+  const result = await emailCode.save();
+  console.log(emailCode);
+  try {
+    sendMail(
+      (email = user.email),
+      (subject = "Verify your Email Address"),
+      (message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1>`),
+      (res) => {
+        return (err, info) => {
+          if (err) throw new Error("Email failed to send");
+          res
+            .status(201)
+            .json({ message: "A new code has been sent to your email" });
+        };
+      },
+      res
+    );
+  } catch (err) {
+    return res.status(500).json({ message: "Email failed to send" });
+  }
+};
+
+module.exports = {
+  createNewUser,
+  verifyAccount,
+  verifyUserEmail,
+  resendVerifyEmailCode,
+};
