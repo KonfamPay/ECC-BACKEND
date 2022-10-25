@@ -14,7 +14,8 @@ const authenticateUser = async (req, res) => {
       message:
         "This email is not registered with any account. Please check the email and try again",
     });
-  if (user && user.oauthId)
+  if (user && !user.password
+  )
     return res.status(400).json({
       message:
         "This account was created using a social option. Kindly sign in with Google or Twitter.",
@@ -22,7 +23,7 @@ const authenticateUser = async (req, res) => {
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword)
-    return res.status(404).json({
+    return res.status(400).json({
       message:
         "This password does not match the password associated with this account. Kindly check the password and try again",
     });
