@@ -67,20 +67,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    photoId: {
-      url: {
-        type: String,
-        required: false,
-        maxlength: 255,
-        default: "",
-      },
-      cloudinaryId: {
-        type: String,
-        required: false,
-        maxlength: 255,
-        default: "",
-      },
-    },
+    // photoId: {
+    //   url: {
+    //     type: String,
+    //     required: false,
+    //     maxlength: 255,
+    //     default: "",
+    //   },
+    //   cloudinaryId: {
+    //     type: String,
+    //     required: false,
+    //     maxlength: 255,
+    //     default: "",
+    //   },
+    // },
     accountVerified: {
       type: Boolean,
       default: false,
@@ -104,11 +104,12 @@ userSchema.methods.generateAuthToken = function () {
       createdAt: this.createdAt,
       dob: this.dob,
       phoneNumber: this.phoneNumber,
-      state: this.state ? this.state : "",
+      state: this.state,
       lga: this.lga,
       address: this.address,
-      photoId: this.photoId,
-      verified: this.verified,
+      // photoId: this.photoId,
+      accountVerified: this.accountVerified,
+      emailVerified: this.emailVerified,
     },
     process.env.JWT_PRIVATE_KEY
   );
@@ -143,7 +144,7 @@ const validateVerifyInputs = (payload) => {
     state: Joi.string().max(30).min(3).required().label("State"),
     lga: Joi.string().max(50).min(3).required().label("Local Government Area"),
     address: Joi.string().max(255).min(10).required().label("Address"),
-    photoIdUrl: Joi.string().required().label("Photo Id"),
+    // photoIdUrl: Joi.string().required().label("Photo Id"),
   });
   return schema.validate(payload);
 };
