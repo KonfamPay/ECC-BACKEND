@@ -8,13 +8,13 @@ const userSchema = new mongoose.Schema(
     firstName: {
       minlength: 2,
       maxlength: 50,
-      required: true,
+      required: false,
       type: String,
     },
     lastName: {
       minlength: 2,
       maxlength: 50,
-      required: true,
+      required: false,
       type: String,
     },
     email: {
@@ -39,6 +39,56 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    dob: {
+      required: false,
+      type: Date,
+    },
+    phoneNumber: {
+      required: false,
+      type: String,
+      default: "",
+      length: 11,
+    },
+    state: {
+      maxlength: 30,
+      minlength: 3,
+      required: false,
+      type: String,
+    },
+    lga: {
+      maxlength: 50,
+      required: false,
+      type: String,
+      default: "",
+    },
+    address: {
+      maxlength: 255,
+      required: false,
+      type: String,
+      default: "",
+    },
+    // photoId: {
+    //   url: {
+    //     type: String,
+    //     required: false,
+    //     maxlength: 255,
+    //     default: "",
+    //   },
+    //   cloudinaryId: {
+    //     type: String,
+    //     required: false,
+    //     maxlength: 255,
+    //     default: "",
+    //   },
+    // },
+    accountVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -52,6 +102,14 @@ userSchema.methods.generateAuthToken = function () {
       email: this.email,
       profilePic: this.profilePic,
       createdAt: this.createdAt,
+      dob: this.dob,
+      phoneNumber: this.phoneNumber,
+      state: this.state,
+      lga: this.lga,
+      address: this.address,
+      // photoId: this.photoId,
+      accountVerified: this.accountVerified,
+      emailVerified: this.emailVerified,
     },
     process.env.JWT_PRIVATE_KEY
   );
@@ -63,8 +121,6 @@ const User = mongoose.model("User", userSchema);
 // Function for validating before persisting anything to the db
 const validateUser = (user) => {
   const schema = Joi.object({
-    firstName: Joi.string().min(2).max(50).required().label("First Name"),
-    lastName: Joi.string().min(2).max(50).required().label("Last Name"),
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: false } })
       .min(3)
@@ -75,4 +131,22 @@ const validateUser = (user) => {
   return schema.validate(user);
 };
 
-module.exports = { User, validateUser };
+const validateVerifyInputs = (payload) => {
+  const schema = Joi.object({
+    phoneNumber: Joi.string()
+      .regex(/^[0-9]{11}$/)
+      .length(11)
+      .label("Phone Number")
+      .required(),
+    firstName: Joi.string().min(2).max(50).required().label("First Name"),
+    lastName: Joi.string().min(2).max(50).required().label("Last Name"),
+    dob: Joi.string().required().label("Date of Birth").length(10),
+    state: Joi.string().max(30).min(3).required().label("State"),
+    lga: Joi.string().max(50).min(3).required().label("Local Government Area"),
+    address: Joi.string().max(255).min(10).required().label("Address"),
+    // photoIdUrl: Joi.string().required().label("Photo Id"),
+  });
+  return schema.validate(payload);
+};
+
+module.exports = { User, validateUser, validateVerifyInputs };

@@ -14,7 +14,8 @@ const authenticateUser = async (req, res) => {
       message:
         "This email is not registered with any account. Please check the email and try again",
     });
-  if (user && user.oauthId)
+  if (user && !user.password
+  )
     return res.status(400).json({
       message:
         "This account was created using a social option. Kindly sign in with Google or Twitter.",
@@ -22,7 +23,7 @@ const authenticateUser = async (req, res) => {
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword)
-    return res.status(404).json({
+    return res.status(400).json({
       message:
         "This password does not match the password associated with this account. Kindly check the password and try again",
     });
@@ -32,10 +33,8 @@ const authenticateUser = async (req, res) => {
 };
 
 const signInWithGoogle = async (req, res) => {
-  console.log("request recieved", req.body);
-  // Check if this user exists
   let user = await User.findOne({ email: req.body.email });
-  console.log(user);
+
   if (user && user.oauthId) {
     const token = user.generateAuthToken();
     return res.status(200).send({ token });
@@ -56,7 +55,13 @@ const signInWithGoogle = async (req, res) => {
       oauthId: req.body.oauthId,
       profilePic: req.body.profilePic,
     });
-    const result = await user.save();
+    console.log(user);
+    try {
+      const result = await user.save();
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
     const token = user.generateAuthToken();
     return res.status(200).send({ token });
   }

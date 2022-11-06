@@ -1,7 +1,7 @@
 const express = require("express");
 const { handleForgotPassword } = require("../controllers/forgot-password");
-const router = express.Router();
+const forgotPasswordRouter = express.Router();
 
-router.post("/", handleForgotPassword);
+forgotPasswordRouter.post("/", handleForgotPassword);
 
-module.exports = router;
+module.exports = forgotPasswordRouter;

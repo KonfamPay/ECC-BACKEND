@@ -1,10 +1,9 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const app = express();
 const port = process.env.PORT || 4000;
 
 require("express-async-errors");
-require("./passport-config");
+// require("./passport-config");
 require("dotenv").config();
 require("./startup/config")();
 require("./startup/middleware")(app);
