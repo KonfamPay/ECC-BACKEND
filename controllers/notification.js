@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const {
   Notification,
   validateNotification,
-} = require("../models/Notification");
+} = require("../models/notification");
 const { User } = require("../models/user");
 
 const getAllNotifications = async (req, res) => {
