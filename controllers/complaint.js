@@ -118,9 +118,28 @@ const getComplaintNumbers = async (req, res) => {
 	});
 };
 
+const updateComplaintStatus = async (req, res) => {
+	const { complaintId, status } = req.body;
+	const complaint = await Complaint.findOneAndUpdate(
+		{ complaintId },
+		{ status }
+	);
+	return res.status(200).json({
+		message: `Complaint with id ${complaintId} has its status to be updated as ${status}`,
+	});
+};
+
 const getAllComplaints = async (req, res) => {
 	const complaints = await Complaint.find({});
 	return res.status(200).send(complaints);
+};
+
+const deleteComplaint = async (req, res) => {
+	const { complaintId } = req.body;
+	const complaint = await Complaint.findOneAndDelete({ complaintId });
+	return res
+		.status(200)
+		.json({ message: `Complaint with id ${complaintId} has been deleted` });
 };
 
 module.exports = {
@@ -128,4 +147,6 @@ module.exports = {
 	getAllComplaintsByAUser,
 	getComplaintNumbers,
 	getAllComplaints,
+	deleteComplaint,
+	updateComplaintStatus,
 };
