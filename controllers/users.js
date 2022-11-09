@@ -93,7 +93,7 @@ const verifyAccount = async (req, res) => {
     // photoIdUrl: photoId.url,
   });
 
-  if (error) return res.status(400).send({ message: error.details[0].message });
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   user.firstName = firstName;
   user.lastName = lastName;
