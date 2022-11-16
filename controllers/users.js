@@ -66,20 +66,20 @@ const verifyAccount = async (req, res) => {
   if (!user)
     return res.status(404).send({ message: "This user does not exist" });
 
-  if (user.verified)
+  if (user.accountVerified)
     return res
       .status(400)
-      .send({ message: "This user has already been verified!" });
+      .json({ message: "This user has already been verified!" });
 
   const {
     firstName,
     lastName,
+    middleName,
     dob,
     phoneNumber,
     address,
-    lga,
     state,
-    // photoId,
+    NIN,
   } = req.body;
 
   const { error } = validateVerifyInputs({
@@ -88,9 +88,9 @@ const verifyAccount = async (req, res) => {
     dob,
     phoneNumber,
     address,
-    lga,
     state,
-    // photoIdUrl: photoId.url,
+    NIN,
+    middleName,
   });
 
   if (error) return res.status(400).json({ message: error.details[0].message });
@@ -100,11 +100,11 @@ const verifyAccount = async (req, res) => {
   user.dob = dob;
   user.phoneNumber = phoneNumber;
   user.address = address;
-  user.lga = lga;
+  user.NIN = NIN;
   user.state = state;
-  // user.photoId = photoId;
+  user.middleName = middleName;
 
-  user.verified = true;
+  user.accountVerified = true;
   await user.save();
 
   const newToken = await user.generateAuthToken();
