@@ -17,6 +17,19 @@ const userSchema = new mongoose.Schema(
       required: false,
       type: String,
     },
+    middleName: {
+      minlength: 2,
+      maxlength: 50,
+      required: false,
+      type: String,
+    },
+    NIN: {
+      minlength: 11,
+      maxlength: 11,
+      unique: true,
+      required: true,
+      type: String,
+    },
     email: {
       minlength: 5,
       maxlength: 255,
@@ -55,32 +68,12 @@ const userSchema = new mongoose.Schema(
       required: false,
       type: String,
     },
-    lga: {
-      maxlength: 50,
-      required: false,
-      type: String,
-      default: "",
-    },
     address: {
       maxlength: 255,
       required: false,
       type: String,
       default: "",
     },
-    // photoId: {
-    //   url: {
-    //     type: String,
-    //     required: false,
-    //     maxlength: 255,
-    //     default: "",
-    //   },
-    //   cloudinaryId: {
-    //     type: String,
-    //     required: false,
-    //     maxlength: 255,
-    //     default: "",
-    //   },
-    // },
     accountVerified: {
       type: Boolean,
       default: false,
@@ -98,6 +91,7 @@ userSchema.methods.generateAuthToken = function () {
     {
       _id: this._id,
       firstName: this.firstName,
+      middleName: this.middleName,
       lastName: this.lastName,
       email: this.email,
       profilePic: this.profilePic,
@@ -107,7 +101,7 @@ userSchema.methods.generateAuthToken = function () {
       state: this.state,
       lga: this.lga,
       address: this.address,
-      // photoId: this.photoId,
+      NIN: this.NIN,
       accountVerified: this.accountVerified,
       emailVerified: this.emailVerified,
     },
@@ -138,13 +132,17 @@ const validateVerifyInputs = (payload) => {
       .length(11)
       .label("Phone Number")
       .required(),
+    NIN: Joi.string()
+      .regex(/^[0-9]{11}$/)
+      .length(11)
+      .label("National Identification Number")
+      .required(),
     firstName: Joi.string().min(2).max(50).required().label("First Name"),
     lastName: Joi.string().min(2).max(50).required().label("Last Name"),
+    middleName: Joi.string().min(2).max(50).label("Middle Name"),
     dob: Joi.string().required().label("Date of Birth").length(10),
     state: Joi.string().max(30).min(3).required().label("State"),
-    lga: Joi.string().max(50).min(3).required().label("Local Government Area"),
     address: Joi.string().max(255).min(10).required().label("Address"),
-    // photoIdUrl: Joi.string().required().label("Photo Id"),
   });
   return schema.validate(payload);
 };
