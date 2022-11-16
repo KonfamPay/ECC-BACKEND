@@ -22,6 +22,24 @@ const getAllNotifications = async (req, res) => {
   return res.status(200).json({ notifications });
 };
 
+const markAllNotificationsByaUserAsRead = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(userId))
+    return res.status(404).json({ message: "This id is not valid!" });
+
+  const user = await User.findOne({ _id: userId });
+  if (!user)
+    return res
+      .status(404)
+      .json({ message: "This user does not exist in the database!" });
+
+  await Notification.updateMany({ userId }, { status: "read" });
+
+  const notifications = await Notification.find({ userId });
+  return res.status(200).json({ notifications });
+};
+
 class NotificationService {
   static async sendNotification(notificationPayload) {
     const { error } = validateNotification(notificationPayload);
@@ -38,4 +56,4 @@ class NotificationService {
   }
 }
 
-module.exports = { getAllNotifications, NotificationService };
+module.exports = { getAllNotifications, NotificationService, markAllNotificationsByaUserAsRead };
