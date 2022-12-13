@@ -1,5 +1,6 @@
 const { User } = require("../models/user");
 const mongoose = require("mongoose");
+const { StatusCodes } = require("http-status-codes");
 const { Activity, validateActivity } = require("../models/activity");
 
 const createNewActivity = async (req, res) => {
