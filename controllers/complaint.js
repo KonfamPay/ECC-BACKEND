@@ -1,5 +1,6 @@
 const { User } = require("../models/user");
 const mongoose = require("mongoose");
+const { StatusCodes } = require("http-status-codes");
 const { Complaint, validateComplaint } = require("../models/complaint");
 
 const createNewComplaint = async (req, res) => {
@@ -22,7 +23,9 @@ const createNewComplaint = async (req, res) => {
 	} = req.body;
 	if (!userId) return res.status(404).json({ message: "userId is required" });
 	if (!mongoose.Types.ObjectId.isValid(userId))
-		return res.status(400).json({ message: "This userId is not valid" });
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This userId is not valid" });
 
 	let user = await User.findById(userId);
 	if (!user)
@@ -45,7 +48,10 @@ const createNewComplaint = async (req, res) => {
 		resolution,
 	});
 
-	if (error) return res.status(400).json({ message: error.details[0].message });
+	if (error)
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: error.details[0].message });
 
 	if (
 		!transactionReceipt ||
@@ -53,12 +59,12 @@ const createNewComplaint = async (req, res) => {
 		!transactionReceipt.cloudinaryId
 	)
 		return res
-			.status(400)
+			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "A transaction receipt is required" });
 
 	if (additionalDocuments && !Array.isArray(additionalDocuments))
 		return res
-			.status(400)
+			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "Additional documents must be an array" });
 
 	if (
@@ -66,7 +72,7 @@ const createNewComplaint = async (req, res) => {
 		additionalDocuments.length > 0 &&
 		(!additionalDocuments[0].url || !additionalDocuments[0].cloudinaryId)
 	)
-		return res.status(400).json({
+		return res.status(StatusCodes.BAD_REQUEST).json({
 			message: "Each additional document must have a url and a cloudinaryId",
 		});
 
@@ -80,7 +86,9 @@ const getAllComplaintsByAUser = async (req, res) => {
 	const { userId } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(userId))
-		return res.status(400).json({ message: "This userId is not valid" });
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This userId is not valid" });
 
 	let user = await User.findById(userId);
 	if (!user)
@@ -96,7 +104,9 @@ const getComplaintNumbers = async (req, res) => {
 	const { userId } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(userId))
-		return res.status(400).json({ message: "This userId is not valid" });
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This userId is not valid" });
 
 	let user = await User.findById(userId);
 

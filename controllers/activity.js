@@ -7,7 +7,9 @@ const createNewActivity = async (req, res) => {
 	const { adminId, actionType, action_done, username, grevianceId } = req.body;
 	if (!adminId) return res.status(404).json({ message: "adminId is required" });
 	if (!mongoose.Types.ObjectId.isValid(adminId))
-		return res.status(400).json({ message: "This adminId is not valid" });
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This adminId is not valid" });
 
 	let admin = await User.findById(adminId);
 	if (!admin)
@@ -16,7 +18,7 @@ const createNewActivity = async (req, res) => {
 			.json({ message: "This user does not exist in our database" });
 	if (!username || !grevianceId)
 		return res
-			.status(400)
+			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "A username or grevianceId is needed" });
 	const { error } = validateActivity({
 		adminId,
@@ -24,7 +26,10 @@ const createNewActivity = async (req, res) => {
 		action_done,
 	});
 
-	if (error) return res.status(400).json({ message: error.details[0].message });
+	if (error)
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: error.details[0].message });
 	let activity = new Activity(req.body);
 	let result = await activity.save();
 

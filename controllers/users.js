@@ -14,11 +14,13 @@ const createNewUser = async (req, res) => {
 	try {
 		const { error } = validate(req.body);
 		if (error)
-			return res.status(400).json({ message: error.details[0].message });
+			return res
+				.status(StatusCodes.BAD_REQUEST)
+				.json({ message: error.details[0].message });
 
 		let user = await User.findOne({ email: req.body.email });
 		if (user)
-			return res.status(400).json({
+			return res.status(StatusCodes.BAD_REQUEST).json({
 				message:
 					"This email is already registered to an account, kindly Login.",
 			});
@@ -55,19 +57,21 @@ const createNewUser = async (req, res) => {
 		}
 		return res.status(StatusCodes.CREATED).json({ code, user });
 	} catch (error) {
-    throw new Error("Failed to create the new user")
-  }
+		throw new Error("Failed to create the new user");
+	}
 };
 
 const verifyAccount = async (req, res) => {
 	const { id } = req.params;
 	if (!id)
 		return res
-			.status(400)
+			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "The id is required in the body of the request!" });
 
 	if (!mongoose.Types.ObjectId.isValid(id))
-		return res.status(400).json({ message: "This is not a valid mongoose id" });
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This is not a valid mongoose id" });
 
 	const user = await User.findById(id);
 
@@ -76,7 +80,7 @@ const verifyAccount = async (req, res) => {
 
 	if (user.accountVerified)
 		return res
-			.status(400)
+			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "This user has already been verified!" });
 
 	const {
@@ -101,7 +105,10 @@ const verifyAccount = async (req, res) => {
 		middleName,
 	});
 
-	if (error) return res.status(400).json({ message: error.details[0].message });
+	if (error)
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: error.details[0].message });
 
 	user.firstName = firstName;
 	user.lastName = lastName;
@@ -123,7 +130,9 @@ const verifyAccount = async (req, res) => {
 const verifyUserEmail = async (req, res) => {
 	const { id } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(id))
-		return res.status(400).json({ message: "This Id is not valid!" });
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This Id is not valid!" });
 
 	const user = await User.findById(id);
 	if (!user)
@@ -131,21 +140,24 @@ const verifyUserEmail = async (req, res) => {
 
 	if (user.emailVerified)
 		return res
-			.status(400)
+			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "This email has already been verified" });
 
 	let emailCode = await EmailCode.findOne({ userId: id });
 
 	if (!emailCode)
 		return res
-			.status(400)
+			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "Please request for another code!" });
 
 	const { code } = req.body;
 
 	const { error } = validateEmailCode({ code });
 
-	if (error) return res.status(400).json({ message: error.details[0].message });
+	if (error)
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: error.details[0].message });
 
 	if (emailCode.code !== code)
 		return res.status(422).json({ message: "You have entered a wrong code" });
@@ -171,7 +183,9 @@ const verifyUserEmail = async (req, res) => {
 const resendVerifyEmailCode = async (req, res) => {
 	const { id } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(id))
-		return res.status(400).json({ message: "This Id is not valid!" });
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This Id is not valid!" });
 
 	const user = await User.findById(id);
 	if (!user)
