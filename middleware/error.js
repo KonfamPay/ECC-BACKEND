@@ -1,5 +1,7 @@
+const { StatusCodes } = require("http-status-codes");
 module.exports = async (err, req, res, next) => {
-  return res
-    .status(500)
-    .send(err.message || "Internal server error. Something Failed");
+	console.log(err);
+	return res
+		.status(StatusCodes.INTERNAL_SERVER_ERROR)
+		.send(err.message || "Internal server error. Something Failed");
 };

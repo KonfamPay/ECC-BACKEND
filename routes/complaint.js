@@ -8,6 +8,7 @@ const {
 	deleteComplaint,
 } = require("../controllers/complaint");
 const complaintRouter = express.Router();
+const auth = require("../middleware/auth");
 
 complaintRouter.get("/", getAllComplaints);
 complaintRouter.post("/", createNewComplaint);
