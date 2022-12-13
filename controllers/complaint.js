@@ -144,7 +144,8 @@ const updateComplaintStatus = async (req, res) => {
 
 const getAllComplaints = async (req, res) => {
 	const complaints = await Complaint.find({});
-	return res.status(StatusCodes.OK).send(complaints);
+	console.log(req.user.userId);
+	return res.status(StatusCodes.OK).json({ complaints });
 };
 
 const deleteComplaint = async (req, res) => {

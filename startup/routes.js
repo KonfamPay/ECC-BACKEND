@@ -1,3 +1,4 @@
+const { StatusCodes } = require("http-status-codes");
 const auth = require("../routes/auth");
 const users = require("../routes/users");
 const activity = require("../routes/activity");

@@ -2,6 +2,7 @@ const express = require("express");
 const imageRouter = express.Router();
 const upload = require("../utils/multer");
 const cloudinary = require("../utils/cloudinary");
+const { StatusCodes } = require("http-status-codes");
 const { image } = require("../utils/cloudinary");
 
 imageRouter.post("/", upload.single("image"), async (req, res) => {

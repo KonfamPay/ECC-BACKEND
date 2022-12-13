@@ -105,7 +105,10 @@ userSchema.methods.generateAuthToken = function () {
       accountVerified: this.accountVerified,
       emailVerified: this.emailVerified,
     },
-    process.env.JWT_PRIVATE_KEY
+    process.env.JWT_PRIVATE_KEY,
+    {
+			expiresIn: "1d",
+		}
   );
   return token;
 };

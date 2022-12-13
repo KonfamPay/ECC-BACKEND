@@ -1,3 +1,4 @@
+const { StatusCodes } = require("http-status-codes");
 module.exports = async (err, req, res, next) => {
 	console.log(err);
 	return res
