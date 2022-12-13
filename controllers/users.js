@@ -47,13 +47,15 @@ const createNewUser = async (req, res) => {
 						if (err) throw new Error("Email failed to send");
 						console.log(user);
 						const token = user.generateAuthToken();
-						res.status(201).json({ token });
+						res.status(StatusCodes.CREATED).json({ token });
 					};
 				},
 				res
 			);
 		} catch (err) {
-			return res.status(500).json({ message: "Email failed to send" });
+			return res
+				.status(StatusCodes.INTERNAL_SERVER_ERROR)
+				.json({ message: "Email failed to send" });
 		}
 		return res.status(StatusCodes.CREATED).json({ code, user });
 	} catch (error) {
@@ -208,14 +210,16 @@ const resendVerifyEmailCode = async (req, res) => {
 				return (err, info) => {
 					if (err) throw new Error("Email failed to send");
 					res
-						.status(201)
+						.status(StatusCodes.CREATED)
 						.json({ message: "A new code has been sent to your email" });
 				};
 			},
 			res
 		);
 	} catch (err) {
-		return res.status(500).json({ message: "Email failed to send" });
+		return res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ message: "Email failed to send" });
 	}
 };
 

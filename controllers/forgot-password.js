@@ -58,7 +58,7 @@ const handleForgotPassword = async (req, res) => {
 		if (err) {
 			console.error(err);
 			return res
-				.status(500)
+				.status(StatusCodes.INTERNAL_SERVER_ERROR)
 				.json({ message: "Something went wrong on the server" });
 		} else {
 			return res.status(200).send("Email Sent " + info.response);
