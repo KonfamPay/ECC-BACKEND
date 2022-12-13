@@ -18,7 +18,7 @@ module.exports = (app) => {
 	app.use("/api/complaints", complaints);
 	app.use("/api/notifications", notifications);
 	app.get("*", (req, res) => {
-		res.sendStatus(404);
+		res.sendStatus(StatusCodes.NOT_FOUND);
 	});
 	app.use(error);
 };

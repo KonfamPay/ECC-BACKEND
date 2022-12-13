@@ -10,11 +10,14 @@ const renderResetPasswordPage = async (req, res) => {
 
 	// Check if the object id is valid
 	if (!validObjectId(id))
-		return res.status(404).send("User does not exist. Invalid Id");
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.send("User does not exist. Invalid Id");
 
 	// Check if the user id exists in the databse
 	const user = await User.findOne({ _id: id });
-	if (!user) return res.status(404).send("User does not exist!");
+	if (!user)
+		return res.status(StatusCodes.NOT_FOUND).send("User does not exist!");
 
 	const secret = process.env.JWT_PRIVATE_KEY + user.password;
 

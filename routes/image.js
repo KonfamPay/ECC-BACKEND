@@ -8,7 +8,7 @@ imageRouter.post("/", upload.single("image"), async (req, res) => {
 	try {
 		const result = await cloudinary.uploader.upload(req.file.path);
 		const { secure_url, public_id } = result;
-		return res.status(200).json({ secure_url, public_id });
+		return res.status(StatusCodes.OK).json({ secure_url, public_id });
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send(err);

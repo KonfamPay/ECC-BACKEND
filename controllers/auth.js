@@ -13,7 +13,7 @@ const authenticateUser = async (req, res) => {
 
 	let user = await User.findOne({ email: req.body.email });
 	if (!user)
-		return res.status(404).json({
+		return res.status(StatusCodes.NOT_FOUND).json({
 			message:
 				"This email is not registered with any account. Please check the email and try again",
 		});
@@ -31,7 +31,7 @@ const authenticateUser = async (req, res) => {
 		});
 
 	const token = user.generateAuthToken();
-	res.status(200).json({ token });
+	res.status(StatusCodes.OK).json({ token });
 };
 
 const signInWithGoogle = async (req, res) => {
@@ -39,12 +39,12 @@ const signInWithGoogle = async (req, res) => {
 
 	if (user && user.oauthId) {
 		const token = user.generateAuthToken();
-		return res.status(200).send({ token });
+		return res.status(StatusCodes.OK).send({ token });
 	} else if (user && !user.oauthId) {
 		user.oauthId = req.body.oauthId;
 		user.profilePic = req.body.profilePic;
 		await user.save();
-		return res.status(200).send({ token });
+		return res.status(StatusCodes.OK).send({ token });
 	}
 
 	// Create a new user if there is no user
@@ -65,7 +65,7 @@ const signInWithGoogle = async (req, res) => {
 			console.log(err);
 		}
 		const token = user.generateAuthToken();
-		return res.status(200).send({ token });
+		return res.status(StatusCodes.OK).send({ token });
 	}
 };
 
@@ -76,7 +76,7 @@ const googleCallback = passport.authenticate("google", {
 const googleSignInSuccessful = async (req, res) => {
 	const user = await User.findOne({ oauthId: req.user.id });
 	const token = user.generateAuthToken();
-	res.status(200).json({ token });
+	res.status(StatusCodes.OK).json({ token });
 };
 
 const googleSignInFailed = async (req, res) => {

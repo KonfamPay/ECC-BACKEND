@@ -78,7 +78,9 @@ const verifyAccount = async (req, res) => {
 	const user = await User.findById(id);
 
 	if (!user)
-		return res.status(404).send({ message: "This user does not exist" });
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.send({ message: "This user does not exist" });
 
 	if (user.accountVerified)
 		return res
@@ -126,7 +128,7 @@ const verifyAccount = async (req, res) => {
 
 	const newToken = await user.generateAuthToken();
 
-	res.status(200).json({ token: newToken });
+	res.status(StatusCodes.OK).json({ token: newToken });
 };
 
 const verifyUserEmail = async (req, res) => {
@@ -138,7 +140,9 @@ const verifyUserEmail = async (req, res) => {
 
 	const user = await User.findById(id);
 	if (!user)
-		return res.status(404).json({ message: "This user does not exist!" });
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ message: "This user does not exist!" });
 
 	if (user.emailVerified)
 		return res
@@ -178,7 +182,7 @@ const verifyUserEmail = async (req, res) => {
 	const token = user.generateAuthToken();
 
 	return res
-		.status(200)
+		.status(StatusCodes.OK)
 		.json({ message: "Email verified successfully!", token });
 };
 
@@ -191,7 +195,9 @@ const resendVerifyEmailCode = async (req, res) => {
 
 	const user = await User.findById(id);
 	if (!user)
-		return res.status(404).json({ message: "This user does not exist!" });
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ message: "This user does not exist!" });
 
 	let emailCode = await EmailCode.findOne({ userId: id });
 	if (emailCode) await EmailCode.deleteOne({ userId: id });

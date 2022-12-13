@@ -16,7 +16,7 @@ const handleForgotPassword = async (req, res) => {
 	// Check if the email exists in the database
 	const user = await User.findOne({ email: req.body.email });
 	if (!user)
-		return res.status(404).json({
+		return res.status(StatusCodes.NOT_FOUND).json({
 			message:
 				"This email is not registered with any account. If you do not have an account, you should create one.",
 		});
@@ -61,7 +61,7 @@ const handleForgotPassword = async (req, res) => {
 				.status(StatusCodes.INTERNAL_SERVER_ERROR)
 				.json({ message: "Something went wrong on the server" });
 		} else {
-			return res.status(200).send("Email Sent " + info.response);
+			return res.status(StatusCodes.OK).send("Email Sent " + info.response);
 		}
 	});
 };

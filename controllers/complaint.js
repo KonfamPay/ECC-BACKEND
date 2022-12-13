@@ -21,7 +21,10 @@ const createNewComplaint = async (req, res) => {
 		details,
 		resolution,
 	} = req.body;
-	if (!userId) return res.status(404).json({ message: "userId is required" });
+	if (!userId)
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ message: "userId is required" });
 	if (!mongoose.Types.ObjectId.isValid(userId))
 		return res
 			.status(StatusCodes.BAD_REQUEST)
@@ -30,7 +33,7 @@ const createNewComplaint = async (req, res) => {
 	let user = await User.findById(userId);
 	if (!user)
 		return res
-			.status(404)
+			.status(StatusCodes.NOT_FOUND)
 			.json({ message: "This user does not exist in our database" });
 
 	const { error } = validateComplaint({
@@ -79,7 +82,7 @@ const createNewComplaint = async (req, res) => {
 	let complaint = new Complaint(req.body);
 	let result = await complaint.save();
 
-	res.status(200).json(result);
+	res.status(StatusCodes.OK).json(result);
 };
 
 const getAllComplaintsByAUser = async (req, res) => {
@@ -93,11 +96,11 @@ const getAllComplaintsByAUser = async (req, res) => {
 	let user = await User.findById(userId);
 	if (!user)
 		return res
-			.status(404)
+			.status(StatusCodes.NOT_FOUND)
 			.json({ message: "This user does not exist in our database" });
 
 	const complaints = await Complaint.find({ userId });
-	return res.status(200).send(complaints);
+	return res.status(StatusCodes.OK).json({ complaints });
 };
 
 const getComplaintNumbers = async (req, res) => {
@@ -112,7 +115,7 @@ const getComplaintNumbers = async (req, res) => {
 
 	if (!user)
 		return res
-			.status(404)
+			.status(StatusCodes.NOT_FOUND)
 			.json({ message: "This user does not exist in our database" });
 
 	const pendingNumber = await Complaint.find({ status: "pending" }).count();
@@ -120,7 +123,7 @@ const getComplaintNumbers = async (req, res) => {
 	const resolvedNumber = await Complaint.find({ status: "resolved" }).count();
 	const closedNumber = await Complaint.find({ status: "closed" }).count();
 
-	return res.status(200).json({
+	return res.status(StatusCodes.OK).json({
 		pending: pendingNumber,
 		open: openNumber,
 		resolved: resolvedNumber,
@@ -134,21 +137,21 @@ const updateComplaintStatus = async (req, res) => {
 		{ complaintId },
 		{ status }
 	);
-	return res.status(200).json({
+	return res.status(StatusCodes.OK).json({
 		message: `Complaint with id ${complaintId} has its status to be updated as ${status}`,
 	});
 };
 
 const getAllComplaints = async (req, res) => {
 	const complaints = await Complaint.find({});
-	return res.status(200).send(complaints);
+	return res.status(StatusCodes.OK).send(complaints);
 };
 
 const deleteComplaint = async (req, res) => {
 	const { complaintId } = req.body;
 	const complaint = await Complaint.findOneAndDelete({ complaintId });
 	return res
-		.status(200)
+		.status(StatusCodes.OK)
 		.json({ message: `Complaint with id ${complaintId} has been deleted` });
 };
 
