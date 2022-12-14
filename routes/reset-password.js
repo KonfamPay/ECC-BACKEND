@@ -2,7 +2,7 @@ const express = require("express");
 const {
   renderResetPasswordPage,
   handleResetPassword,
-} = require("../controllers/reset-password");
+} = require("../controllers/resetpasswordController");
 
 const resetPasswordRouter = express.Router();
 

@@ -5,7 +5,7 @@ const {
   verifyAccount,
   verifyUserEmail,
   resendVerifyEmailCode,
-} = require("../controllers/users");
+} = require("../controllers/usersController");
 
 usersRouter.post("/", createNewUser);
 usersRouter.post("/verify/:id", verifyAccount);
