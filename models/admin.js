@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
 		role: {
 			enum: ["admin", "Lead-admin"],
 			default: "admin",
+			required: true,
 		},
 		password: {
 			minlength: 5,
