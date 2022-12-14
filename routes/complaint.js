@@ -6,7 +6,7 @@ const {
 	getComplaintNumbers,
 	updateComplaintStatus,
 	deleteComplaint,
-} = require("../controllers/complaint");
+} = require("../controllers/complaintController");
 const complaintRouter = express.Router();
 const auth = require("../middleware/auth");
 
