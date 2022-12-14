@@ -62,7 +62,7 @@ const Admin = mongoose.model("Admin", adminSchema);
 // Function for validating before persisting anything to the db
 const validateAdmin = (admin) => {
 	const schema = Joi.object({
-		name: Joi.string().min(5).max(5).required.label("Name"),
+		name: Joi.string().min(5).max(5).required().label("Name"),
 		email: Joi.string()
 			.email({ minDomainSegments: 2, tlds: { allow: false } })
 			.min(3)

@@ -7,17 +7,17 @@ const createAdmin = async (req, res) => {
 	try {
 		const { error } = validate(req.body);
 		if (error)
-			return res
-				.status(StatusCodes.BAD_REQUEST)
-				.json({ message: error.details[0].message });
+			return res.status(StatusCodes.PARTIAL_CONTENT).json({
+				status: StatusCodes.PARTIAL_CONTENT,
+				message: error.details[0].message,
+			});
 
 		let admin = await Admin.findOne({ email: req.body.email });
 		if (admin)
-			return res.status(StatusCodes.BAD_REQUEST).json({
+			return res.status(StatusCodes.OK).json({
 				message:
 					"This email is already registered to an account, kindly Login.",
 			});
-
 		const salt = await bcrypt.genSalt(10);
 		const password = await bcrypt.hash(req.body.password, salt);
 		console.log(req.body.password, password);
@@ -25,9 +25,15 @@ const createAdmin = async (req, res) => {
 		admin = new Admin({ email, name, phoneNumber, role, password });
 		await admin.save();
 
-		return res.status(StatusCodes.CREATED).json({ admin });
+		return res.status(StatusCodes.CREATED).json({
+			status: StatusCodes.CREATED,
+			name: admin.name,
+			email: admin.email,
+			phoneNumber: admin.phoneNumber,
+			role: admin.role,
+		});
 	} catch (error) {
-		throw new Error("Failed to create the new user");
+		throw new Error("Failed to create the new admin");
 	}
 };
 
