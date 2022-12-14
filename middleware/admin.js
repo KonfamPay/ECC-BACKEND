@@ -6,7 +6,6 @@ const leadAdmin = async (req, res, next) => {
 		throw new UnauthenticatedError("Authentication invalid");
 	}
 	const token = authHeader.split(" ")[1];
-
 	try {
 		const payload = jwt.verify(token, process.env.JWT_SECRET);
 		if (payload.role !== "Lead-admin") {
@@ -30,7 +29,6 @@ const admin = async (req, res, next) => {
 		throw new Error("Authentication invalid");
 	}
 	const token = authHeader.split(" ")[1];
-
 	try {
 		const payload = jwt.verify(token, process.env.JWT_SECRET);
 		if (payload.role !== "Admin" && payload.role !== "Lead-admin") {
