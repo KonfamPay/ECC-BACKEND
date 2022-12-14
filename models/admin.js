@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema(
 			enum: ["admin", "Lead-admin"],
 			default: "admin",
 		},
+		password: {
+			minlength: 5,
+			maxlength: 127,
+			required: false,
+			type: String,
+		},
 	},
 	{ timestamps: true }
 );
