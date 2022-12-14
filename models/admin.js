@@ -3,7 +3,7 @@ const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const userSchema = new mongoose.Schema(
+const adminSchema = new mongoose.Schema(
 	{
 		email: {
 			minlength: 5,
@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema(
 			enum: ["admin", "Lead-admin"],
 			default: "admin",
 			required: true,
+			type: String,
 		},
 		password: {
 			minlength: 5,
@@ -39,7 +40,7 @@ const userSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-userSchema.methods.generateAuthToken = function () {
+adminSchema.methods.generateAuthToken = function () {
 	const token = jwt.sign(
 		{
 			userId: this._id,
