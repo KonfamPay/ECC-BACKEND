@@ -7,7 +7,7 @@ const {
 const mongoose = require("mongoose");
 const { sendMail } = require("../utils/node-mailer-transport");
 const { EmailCode, validateEmailCode } = require("../models/emailCode");
-const { NotificationService } = require("./notification");
+const { NotificationService } = require("./notificationController");
 const { StatusCodes } = require("http-status-codes");
 
 const createNewUser = async (req, res) => {

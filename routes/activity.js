@@ -3,7 +3,7 @@ const activityRouter = express.Router();
 const {
 	createNewActivity,
 	getAllActivity,
-} = require("../controllers/activity");
+} = require("../controllers/activityController");
 
 activityRouter.post("/", createNewActivity);
 activityRouter.get("/", getAllActivity);
