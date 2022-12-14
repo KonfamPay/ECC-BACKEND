@@ -49,7 +49,7 @@ userSchema.methods.generateAuthToken = function () {
 	return token;
 };
 
-const User = mongoose.model("User", userSchema);
+const Admin = mongoose.model("Admin", adminSchema);
 
 // Function for validating before persisting anything to the db
 const validateAdmin = (admin) => {
@@ -89,4 +89,4 @@ const validateAdmin = (admin) => {
 // 	return schema.validate(payload);
 // };
 
-module.exports = { User, validateAdmin };
+module.exports = { Admin, validateAdmin };
