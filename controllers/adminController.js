@@ -43,6 +43,29 @@ const createAdmin = async (req, res) => {
 	}
 };
 
+const getAdminDetails = async (req, res) => {
+	try {
+		let admin = await Admin.findOne({ email: req.admin.id });
+		if (admin)
+			return res.status(StatusCodes.OK).json({
+				status: "fail",
+				message: "This email does not exist",
+			});
+		const salt = await bcrypt.genSalt(10);
+		const password = await bcrypt.hash(req.body.password, salt);
+		console.log(req.body.password, password);
+		const { email, name, phoneNumber, role } = req.body;
+		admin = new Admin({ email, name, phoneNumber, role, password });
+		await admin.save();
+
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+		});
+	} catch (error) {
+		throw new Error("Failed to create the new admin");
+	}
+};
+
 const adminLogin = async (req, res) => {
 	const { error } = validateAdmin(req.body);
 	if (error)
@@ -122,8 +145,8 @@ const veifyAdminLogin = async (req, res) => {
 			message: "This admin does not exist",
 		});
 	const token = admin.generateAuthToken();
-	const deleteEmailCode = await EmailCode.findByIdAndDelete(emailCode._id);
+	const deleteEmailCode = await EmailCode.findByIdAnd(emailCode._id);
 	res.status(200).json({ status: "success", adminId, token });
 };
 
-module.exports = { createAdmin, adminLogin, veifyAdminLogin };
+module.exports = { createAdmin, getAdminDetails, adminLogin, veifyAdminLogin };
