@@ -51,13 +51,6 @@ const getAdminDetails = async (req, res) => {
 				status: "fail",
 				message: "This email does not exist",
 			});
-		const salt = await bcrypt.genSalt(10);
-		const password = await bcrypt.hash(req.body.password, salt);
-		console.log(req.body.password, password);
-		const { email, name, phoneNumber, role } = req.body;
-		admin = new Admin({ email, name, phoneNumber, role, password });
-		await admin.save();
-
 		return res.status(StatusCodes.OK).json({
 			status: "success",
 		});
