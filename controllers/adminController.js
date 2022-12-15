@@ -37,4 +37,38 @@ const createAdmin = async (req, res) => {
 	}
 };
 
-module.exports = { createAdmin };
+const adminLogin = async (req, res) => {
+	const { error } = validate(req.body);
+	if (error)
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: error.details[0].message });
+
+	let admin = await Admin.findOne({ email: req.body.email });
+	if (!admin)
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message:
+				"This email is not registered with any account. Please check the email and try again",
+		});
+	const data = {
+		name: admin.name,
+		phoneNumber: admin.phoneNumber,
+		email: admin.email,
+		role: admin.role,
+	};
+	const validPassword = await bcrypt.compare(req.body.password, admin.password);
+	if (!validPassword)
+		return res.status(StatusCodes.BAD_REQUEST).json({
+			message:
+				"This password does not match the password associated with admin. Kindly check the password and try again",
+		});
+
+	const token = admin.generateAuthToken();
+	return res.status(StatusCodes.OK).json({
+		status: "success",
+		token,
+		data,
+	});
+};
+
+module.exports = { createAdmin, adminLogin };
