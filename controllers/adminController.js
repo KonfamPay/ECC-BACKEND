@@ -71,7 +71,7 @@ const adminLogin = async (req, res) => {
 
 	// Generate code to send to email
 	const code = Math.floor(1000 + Math.random() * 9000).toString();
-	const emailCode = new EmailCode({ code, adminId: admin._id });
+	const emailCode = new EmailCode({ code, userId: admin._id });
 	const result = await emailCode.save();
 	console.log(emailCode);
 	const link = `${process.env.HOST}/api/admin/login/verify/${admin._id}/${code}`;
@@ -103,7 +103,7 @@ const adminLogin = async (req, res) => {
 };
 
 const veifyAdminLogin = async (req, res) => {
-	const adminId = req.params.adminid;
+	const adminId = req.params.adminId;
 	const otp = req.params.otp;
 
 	if (!mongoose.Types.ObjectId.isValid(adminId))
@@ -117,11 +117,13 @@ const veifyAdminLogin = async (req, res) => {
 			message: "This otp is wrong kindly request another one",
 		});
 	let admin = await Admin.findById(adminId);
-  if (!admin)
+	if (!admin)
 		return res.status(StatusCodes.NOT_FOUND).json({
 			message: "This admin does not exist",
 		});
-	res.status(200).json({ status: "success" });
+
+	const token = admin.generateAuthToken();
+	res.status(200).json({ status: "success", adminId, token });
 };
 
 module.exports = { createAdmin, adminLogin, veifyAdminLogin };
