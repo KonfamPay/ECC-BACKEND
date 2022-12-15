@@ -74,7 +74,7 @@ const adminLogin = async (req, res) => {
 	const emailCode = new EmailCode({ code, adminId: admin._id });
 	const result = await emailCode.save();
 	console.log(emailCode);
-	const link = `${process.env.HOST}/api/reset-password/${admin._id}/${code}`;
+	const link = `${process.env.HOST}/api/admin/login/verify/${admin._id}/${code}`;
 	try {
 		sendMail(
 			admin.email,
@@ -104,4 +104,4 @@ const adminLogin = async (req, res) => {
 
 const veifyAdminLogin = (req, res) => {};
 
-module.exports = { createAdmin, adminLogin };
+module.exports = { createAdmin, adminLogin, veifyAdminLogin };
