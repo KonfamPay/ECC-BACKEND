@@ -121,8 +121,8 @@ const veifyAdminLogin = async (req, res) => {
 		return res.status(StatusCodes.NOT_FOUND).json({
 			message: "This admin does not exist",
 		});
-
 	const token = admin.generateAuthToken();
+	const deleteEmailCode = await EmailCode.findByIdAndDelete(emailCode._id);
 	res.status(200).json({ status: "success", adminId, token });
 };
 
