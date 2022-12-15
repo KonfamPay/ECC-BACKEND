@@ -1,11 +1,15 @@
 const bcrypt = require("bcrypt");
-const { Admin, validateAdmin: validate } = require("../models/admin");
+const {
+	Admin,
+	validateAdmin,
+	validateVerifyInputs,
+} = require("../models/admin");
 const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 
 const createAdmin = async (req, res) => {
 	try {
-		const { error } = validate(req.body);
+		const { error } = validateVerifyInputs(req.body);
 		if (error)
 			return res.status(StatusCodes.PARTIAL_CONTENT).json({
 				status: StatusCodes.PARTIAL_CONTENT,
@@ -38,7 +42,7 @@ const createAdmin = async (req, res) => {
 };
 
 const adminLogin = async (req, res) => {
-	const { error } = validate(req.body);
+	const { error } = validateAdmin(req.body);
 	if (error)
 		return res
 			.status(StatusCodes.BAD_REQUEST)
