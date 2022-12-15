@@ -216,7 +216,7 @@ const resendVerifyEmailCode = async (req, res) => {
 				return (err, info) => {
 					if (err) throw new Error("Email failed to send");
 					res
-						.status(StatusCodes.CREATED)
+						.status(StatusCodes.OK)
 						.json({ message: "A new code has been sent to your email" });
 				};
 			},

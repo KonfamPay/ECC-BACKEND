@@ -6,6 +6,8 @@ const {
 } = require("../models/admin");
 const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
+const { sendMail } = require("../utils/node-mailer-transport");
+const { EmailCode, validateEmailCode } = require("../models/emailCode");
 
 const createAdmin = async (req, res) => {
 	try {
@@ -67,12 +69,39 @@ const adminLogin = async (req, res) => {
 				"This password does not match the password associated with admin. Kindly check the password and try again",
 		});
 
-	const token = admin.generateAuthToken();
+	// Generate code to send to email
+	const code = Math.floor(1000 + Math.random() * 9000).toString();
+	const emailCode = new EmailCode({ code, adminId: admin._id });
+	const result = await emailCode.save();
+	console.log(emailCode);
+	const link = `${process.env.HOST}/api/reset-password/${admin._id}/${code}`;
+	try {
+		sendMail(
+			admin.email,
+			(subject = "OTP To Login to your Konfampay Admin Account"),
+			(message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1><p>Or Login using this link: <br>${link}</p>`),
+			(res) => {
+				return (err, info) => {
+					if (err) throw new Error("Email failed to send");
+					res
+						.status(StatusCodes.OK)
+						.json({ status: "success", message: "Email has been sent" });
+				};
+			},
+			res
+		);
+	} catch (err) {
+		return res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ status: "fail", message: "Email failed to send" });
+	}
 	return res.status(StatusCodes.OK).json({
 		status: "success",
-		token,
+		code,
 		data,
 	});
 };
+
+const veifyAdminLogin = (req, res) => {};
 
 module.exports = { createAdmin, adminLogin };

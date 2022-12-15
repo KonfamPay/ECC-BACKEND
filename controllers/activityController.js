@@ -4,7 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const { Activity, validateActivity } = require("../models/activity");
 
 const createNewActivity = async (req, res) => {
-	const { adminId, actionType, action_done, username, grevianceId } = req.body;
+	const { adminId, actionType, actionDone, username, grevianceId } = req.body;
 	if (!adminId)
 		return res
 			.status(StatusCodes.NOT_FOUND)
@@ -26,7 +26,7 @@ const createNewActivity = async (req, res) => {
 	const { error } = validateActivity({
 		adminId,
 		actionType,
-		action_done,
+		actionDone,
 	});
 
 	if (error)
@@ -36,7 +36,7 @@ const createNewActivity = async (req, res) => {
 	let activity = new Activity(req.body);
 	let result = await activity.save();
 
-	res.status(StatusCodes.OK).json(result);
+	res.status(StatusCodes.OK).json({ result });
 };
 
 const getAllActivity = async (req, res) => {

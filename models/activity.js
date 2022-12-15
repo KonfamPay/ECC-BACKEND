@@ -14,7 +14,7 @@ const activitySchema = new mongoose.Schema(
 			maxlength: 30,
 			required: true,
 		},
-		action_done: {
+		actionDone: {
 			type: String,
 			enum: [
 				"added_user",
@@ -50,7 +50,7 @@ const validateActivity = (activity) => {
 	const schema = Joi.object({
 		adminId: Joi.string().min(5).max(301).required(),
 		actionType: Joi.string().min(5).max(30).valid("user", "complaint"),
-		action_done: Joi.string()
+		actionDone: Joi.string()
 			.min(5)
 			.max(30)
 			.valid(
