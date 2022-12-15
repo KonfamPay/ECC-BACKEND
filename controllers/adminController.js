@@ -102,6 +102,26 @@ const adminLogin = async (req, res) => {
 	});
 };
 
-const veifyAdminLogin = (req, res) => {};
+const veifyAdminLogin = async (req, res) => {
+	const adminId = req.params.adminid;
+	const otp = req.params.otp;
+
+	if (!mongoose.Types.ObjectId.isValid(adminId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This userId is not valid" });
+
+	let emailCode = await EmailCode.findOne({ otp, userId: adminId });
+	if (!emailCode)
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message: "This otp is wrong kindly request another one",
+		});
+	let admin = await Admin.findById(adminId);
+  if (!admin)
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message: "This admin does not exist",
+		});
+	res.status(200).json({ status: "success" });
+};
 
 module.exports = { createAdmin, adminLogin, veifyAdminLogin };
