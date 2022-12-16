@@ -161,7 +161,10 @@ const deleteComplaint = async (req, res) => {
 	});
 	return res
 		.status(StatusCodes.OK)
-		.json({ message: `Complaint with id ${complaintId} has been deleted` });
+		.json({
+			status: "success",
+			message: `Complaint with id ${complaintId} has been deleted`,
+		});
 };
 
 module.exports = {
