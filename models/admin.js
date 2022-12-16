@@ -43,7 +43,7 @@ const adminSchema = new mongoose.Schema(
 adminSchema.methods.generateAuthToken = function () {
 	const token = jwt.sign(
 		{
-			userId: this._id,
+			adminId: this._id,
 			name: this.name,
 			phoneNumber: this.phoneNumber,
 			email: this.email,

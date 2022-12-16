@@ -2,24 +2,25 @@ const jwt = require("jsonwebtoken");
 
 const leadAdmin = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
+	console.log(authHeader);
 	if (!authHeader || !authHeader.startsWith("Bearer")) {
 		throw new UnauthenticatedError("Authentication invalid");
 	}
 	const token = authHeader.split(" ")[1];
 	try {
-		const payload = jwt.verify(token, process.env.JWT_SECRET);
+		const payload = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
 		if (payload.role !== "Lead-admin") {
-			throw new UnauthenticatedError("Authentication invalid");
+			throw new Error("Authentication invalid");
 		}
-		req.user = {
-			userId: payload.userId,
+		req.admin = {
+			adminId: payload.adminId,
 			name: payload.name,
 			email: payload.email,
 			role: payload.role,
 		};
 		next();
 	} catch (error) {
-		throw new UnauthenticatedError("Authentication invalid");
+		throw new Error("Authentication invalid");
 	}
 };
 
@@ -30,18 +31,19 @@ const admin = async (req, res, next) => {
 	}
 	const token = authHeader.split(" ")[1];
 	try {
-		const payload = jwt.verify(token, process.env.JWT_SECRET);
+		const payload = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
 		if (payload.role !== "Admin" && payload.role !== "Lead-admin") {
 			throw new Error("Authentication invalid");
 		}
-		req.user = {
-			userId: payload.userId,
+		req.admin = {
+			adminId: payload.adminId,
 			name: payload.name,
 			email: payload.email,
 			role: payload.role,
 		};
 		next();
 	} catch (error) {
+		console.log(error)
 		throw new Error("Authentication invalid");
 	}
 };

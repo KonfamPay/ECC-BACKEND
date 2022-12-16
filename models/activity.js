@@ -7,7 +7,7 @@ const activitySchema = new mongoose.Schema(
 	{
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
-			required: true,
+			required: false,
 		},
 		actionType: {
 			type: String,

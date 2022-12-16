@@ -2,6 +2,7 @@ const { User } = require("../models/user");
 const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 const { Complaint, validateComplaint } = require("../models/complaint");
+const { ActivityService } = require("./activityController");
 
 const createNewComplaint = async (req, res) => {
 	const {
@@ -148,8 +149,16 @@ const getAllComplaints = async (req, res) => {
 };
 
 const deleteComplaint = async (req, res) => {
-	const { complaintId } = req.body;
+	const { id: complaintId } = req.params;
 	const complaint = await Complaint.findOneAndDelete({ complaintId });
+	console.log(req.admin);
+	await ActivityService.addActivity({
+		adminId: req.admin.adminId,
+		actionType: "complaint",
+		actionDone: "deleted_complaint",
+		complaintId,
+		userId: NULL,
+	});
 	return res
 		.status(StatusCodes.OK)
 		.json({ message: `Complaint with id ${complaintId} has been deleted` });
