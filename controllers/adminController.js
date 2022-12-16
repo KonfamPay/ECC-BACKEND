@@ -152,7 +152,7 @@ const veifyAdminLogin = async (req, res) => {
 };
 
 const deleteAdmin = async (req, res) => {
-	const adminId = req.params.adminId;
+	const adminId = req.params.id;
 	if (!mongoose.Types.ObjectId.isValid(adminId))
 		return res
 			.status(StatusCodes.BAD_REQUEST)
@@ -160,6 +160,13 @@ const deleteAdmin = async (req, res) => {
 	const admin = await Admin.findById(adminId);
 	if (admin) {
 		await Admin.findByIdAndDelete(adminId);
+		await ActivityService.addActivity({
+			adminId: req.admin.adminId,
+			actionType: "admin",
+			actionDone: "deleted_admin",
+			complaintId: NULL,
+			userId: adminId,
+		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
 			message: `This admin with the id ${adminId} has been deleted`,

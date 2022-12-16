@@ -238,6 +238,13 @@ const deleteUser = async (req, res) => {
 	const user = await User.findById(userId);
 	if (user) {
 		await User.findByIdAndDelete(req.params.id);
+		await ActivityService.addActivity({
+			adminId: req.admin.adminId,
+			actionType: "user",
+			actionDone: "deleted_user",
+			complaintId: NULL,
+			userId: userId,
+		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
 			message: `This user with the id ${userId} has been deleted`,
