@@ -151,4 +151,30 @@ const veifyAdminLogin = async (req, res) => {
 	res.status(200).json({ status: "success", adminId, token });
 };
 
-module.exports = { createAdmin, getAdminDetails, adminLogin, veifyAdminLogin };
+const deleteAdmin = async (req, res) => {
+	const adminId = req.params.adminId;
+	if (!mongoose.Types.ObjectId.isValid(adminId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This adminID is not valid" });
+	const admin = await Admin.findById(adminId);
+	if (admin) {
+		await Admin.findByIdAndDelete(adminId);
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			message: `This admin with the id ${adminId} has been deleted`,
+		});
+	} else {
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ status: "fail", message: "This admin does not exist!" });
+	}
+};
+
+module.exports = {
+	createAdmin,
+	getAdminDetails,
+	adminLogin,
+	veifyAdminLogin,
+	deleteAdmin,
+};
