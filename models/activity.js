@@ -9,7 +9,7 @@ const activitySchema = new mongoose.Schema(
 		},
 		actionType: {
 			type: String,
-			enum: ["user", "complaint"],
+			enum: ["user", "complaint", "admin"],
 			minlength: 4,
 			maxlength: 30,
 			required: true,
@@ -24,6 +24,8 @@ const activitySchema = new mongoose.Schema(
 				"approved_complaint",
 				"deleted_complaint",
 				"replied_complaint",
+				"created_admin",
+				"deleted_admin",
 			],
 			minlength: 5,
 			maxlength: 50,
@@ -52,7 +54,7 @@ const validateActivity = (activity) => {
 		actionType: Joi.string().min(5).max(30).valid("user", "complaint"),
 		actionDone: Joi.string()
 			.min(5)
-			.max(30)
+			.max(19)
 			.valid(
 				"added_user",
 				"edited_user",
@@ -60,7 +62,9 @@ const validateActivity = (activity) => {
 				"verified_user",
 				"approved_complaint",
 				"deleted_complaint",
-				"replied_complaint"
+				"replied_complaint",
+				"created_admin",
+				"deleted_admin"
 			),
 	});
 	return schema.validate(activity);
