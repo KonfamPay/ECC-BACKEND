@@ -18,7 +18,7 @@ const createNewActivity = async (req, res) => {
 	if (!admin)
 		return res
 			.status(StatusCodes.NOT_FOUND)
-			.json({ message: "This user does not exist in our database" });
+			.json({ message: "This admin does not exist in our database" });
 	if (!username || !grevianceId)
 		return res
 			.status(StatusCodes.BAD_REQUEST)

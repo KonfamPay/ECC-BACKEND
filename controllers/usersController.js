@@ -229,9 +229,30 @@ const resendVerifyEmailCode = async (req, res) => {
 	}
 };
 
+const deleteUser = async (req, res) => {
+	const userId = req.params.id;
+	if (!mongoose.Types.ObjectId.isValid(userId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ status: "fail", message: "This UserId is not valid!" });
+	const user = await User.findById(userId);
+	if (user) {
+		await User.findByIdAndDelete(req.params.id);
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			message: `This user with the id ${userId} has been deleted`,
+		});
+	} else {
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ status: "fail", message: "This user does not exist!" });
+	}
+};
+
 module.exports = {
 	createNewUser,
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
+	deleteUser,
 };
