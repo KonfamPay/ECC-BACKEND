@@ -1,20 +1,22 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const { User } = require("./user");
+const { Admin } = require("./admin");
 
 const activitySchema = new mongoose.Schema(
 	{
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
-			required: true,
+			required: false,
 		},
 		actionType: {
 			type: String,
-			enum: ["user", "complaint"],
+			enum: ["user", "complaint", "admin"],
 			minlength: 4,
 			maxlength: 30,
 			required: true,
 		},
-		action_done: {
+		actionDone: {
 			type: String,
 			enum: [
 				"added_user",
@@ -24,18 +26,28 @@ const activitySchema = new mongoose.Schema(
 				"approved_complaint",
 				"deleted_complaint",
 				"replied_complaint",
+				"created_admin",
+				"deleted_admin",
 			],
 			minlength: 5,
 			maxlength: 50,
 			required: true,
 		},
-		username: {
-			type: String,
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
 			minlength: 5,
 			maxlength: 50,
+			ref: "User",
 			required: false,
 		},
-		grevianceId: {
+		adminId: {
+			type: mongoose.Schema.Types.ObjectId,
+			minlength: 5,
+			maxlength: 50,
+			ref: "Admin",
+			required: false,
+		},
+		complaintId: {
 			type: String,
 			minlength: 5,
 			maxlength: 100,
@@ -49,10 +61,10 @@ const activitySchema = new mongoose.Schema(
 const validateActivity = (activity) => {
 	const schema = Joi.object({
 		adminId: Joi.string().min(5).max(301).required(),
-		actionType: Joi.string().min(5).max(30).valid("user", "complaint"),
-		action_done: Joi.string()
+		actionType: Joi.string().min(5).max(30).valid("user", "complaint", "admin"),
+		actionDone: Joi.string()
 			.min(5)
-			.max(30)
+			.max(19)
 			.valid(
 				"added_user",
 				"edited_user",
@@ -60,8 +72,13 @@ const validateActivity = (activity) => {
 				"verified_user",
 				"approved_complaint",
 				"deleted_complaint",
-				"replied_complaint"
+				"replied_complaint",
+				"created_admin",
+				"deleted_admin"
 			),
+		userId: Joi.string().min(5).max(50),
+		adminId: Joi.string().min(5).max(50),
+		complaintId: Joi.string().min(5).max(50),
 	});
 	return schema.validate(activity);
 };

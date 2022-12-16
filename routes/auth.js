@@ -5,7 +5,7 @@ const {
 	googleCallback,
 	googleSignInSuccessful,
 	googleSignInFailed,
-} = require("../controllers/auth");
+} = require("../controllers/authController");
 const authRouter = express.Router();
 
 authRouter.post("/", authenticateUser);

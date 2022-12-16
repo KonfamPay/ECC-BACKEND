@@ -2,7 +2,7 @@ const express = require("express");
 const {
   getAllNotifications,
   markAllNotificationsByaUserAsRead,
-} = require("../controllers/notification");
+} = require("../controllers/notificationController");
 const notificationsRouter = express.Router();
 
 notificationsRouter.get("/:userId", getAllNotifications);

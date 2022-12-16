@@ -22,7 +22,6 @@ const authenticateUser = async (req, res) => {
 			message:
 				"This account was created using a social option. Kindly sign in with Google or Twitter.",
 		});
-
 	const validPassword = await bcrypt.compare(req.body.password, user.password);
 	if (!validPassword)
 		return res.status(StatusCodes.BAD_REQUEST).json({
@@ -31,7 +30,7 @@ const authenticateUser = async (req, res) => {
 		});
 
 	const token = user.generateAuthToken();
-	res.status(StatusCodes.OK).json({ token });
+	res.status(StatusCodes.OK).json({ status: "success", user: user._id, token });
 };
 
 const signInWithGoogle = async (req, res) => {

@@ -1,5 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const auth = require("../routes/auth");
+const admin = require("../routes/admin");
 const users = require("../routes/users");
 const activity = require("../routes/activity");
 const forgotPassword = require("../routes/forgot-password");
@@ -10,6 +11,7 @@ const notifications = require("../routes/notifications");
 const complaints = require("../routes/complaint");
 
 module.exports = (app) => {
+	app.use("/api/admin", admin);
 	app.use("/api/users", users);
 	app.use("/api/activity", activity);
 	app.use("/api/auth", auth);

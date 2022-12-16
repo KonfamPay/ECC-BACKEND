@@ -7,7 +7,7 @@ const {
 const mongoose = require("mongoose");
 const { sendMail } = require("../utils/node-mailer-transport");
 const { EmailCode, validateEmailCode } = require("../models/emailCode");
-const { NotificationService } = require("./notification");
+const { NotificationService } = require("./notificationController");
 const { StatusCodes } = require("http-status-codes");
 
 const createNewUser = async (req, res) => {
@@ -216,7 +216,7 @@ const resendVerifyEmailCode = async (req, res) => {
 				return (err, info) => {
 					if (err) throw new Error("Email failed to send");
 					res
-						.status(StatusCodes.CREATED)
+						.status(StatusCodes.OK)
 						.json({ message: "A new code has been sent to your email" });
 				};
 			},
@@ -229,9 +229,30 @@ const resendVerifyEmailCode = async (req, res) => {
 	}
 };
 
+const deleteUser = async (req, res) => {
+	const userId = req.params.id;
+	if (!mongoose.Types.ObjectId.isValid(userId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ status: "fail", message: "This UserId is not valid!" });
+	const user = await User.findById(userId);
+	if (user) {
+		await User.findByIdAndDelete(req.params.id);
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			message: `This user with the id ${userId} has been deleted`,
+		});
+	} else {
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ status: "fail", message: "This user does not exist!" });
+	}
+};
+
 module.exports = {
 	createNewUser,
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
+	deleteUser,
 };
