@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const { User } = require("./user");
+const { Admin } = require("./admin");
 
 const activitySchema = new mongoose.Schema(
 	{
@@ -31,13 +33,21 @@ const activitySchema = new mongoose.Schema(
 			maxlength: 50,
 			required: true,
 		},
-		username: {
-			type: String,
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
 			minlength: 5,
 			maxlength: 50,
+			ref: "User",
 			required: false,
 		},
-		grevianceId: {
+		adminId: {
+			type: mongoose.Schema.Types.ObjectId,
+			minlength: 5,
+			maxlength: 50,
+			ref: "Admin",
+			required: false,
+		},
+		complaintId: {
 			type: String,
 			minlength: 5,
 			maxlength: 100,
@@ -51,7 +61,7 @@ const activitySchema = new mongoose.Schema(
 const validateActivity = (activity) => {
 	const schema = Joi.object({
 		adminId: Joi.string().min(5).max(301).required(),
-		actionType: Joi.string().min(5).max(30).valid("user", "complaint"),
+		actionType: Joi.string().min(5).max(30).valid("user", "complaint", "admin"),
 		actionDone: Joi.string()
 			.min(5)
 			.max(19)
@@ -66,6 +76,9 @@ const validateActivity = (activity) => {
 				"created_admin",
 				"deleted_admin"
 			),
+		userId: Joi.string().min(5).max(50),
+		adminId: Joi.string().min(5).max(50),
+		complaintId: Joi.string().min(5).max(50),
 	});
 	return schema.validate(activity);
 };

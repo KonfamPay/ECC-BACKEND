@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 const { Activity, validateActivity } = require("../models/activity");
 
-const createNewActivity = async (req, res) => {
+const createNewActivitdy = async (req, res) => {
 	const { adminId, actionType, actionDone, username, grevianceId } = req.body;
 	if (!adminId)
 		return res
@@ -44,7 +44,17 @@ const getAllActivity = async (req, res) => {
 	return res.status(StatusCodes.OK).send(activities);
 };
 
+class ActivityService {
+	static async addActivity(activityPayload) {
+		const { error } = validateActivity(activityPayload);
+		if (error) throw new Error(error.details[0].message);
+		const activity = new Activity(activityPayload);
+		return await activity.save();
+	}
+}
+
 module.exports = {
-	createNewActivity,
+	createNewActivitdy,
 	getAllActivity,
+	ActivityService,
 };
