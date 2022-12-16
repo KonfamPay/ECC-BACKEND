@@ -82,6 +82,13 @@ const createNewComplaint = async (req, res) => {
 
 	let complaint = new Complaint(req.body);
 	let result = await complaint.save();
+	await ActivityService.addActivity({
+		adminId: NULL,
+		actionType: "complaint",
+		actionDone: "created_complaint",
+		complaintId: result._id,
+		userId,
+	});
 
 	res.status(StatusCodes.OK).json(result);
 };
@@ -125,10 +132,13 @@ const getComplaintNumbers = async (req, res) => {
 	const closedNumber = await Complaint.find({ status: "closed" }).count();
 
 	return res.status(StatusCodes.OK).json({
-		pending: pendingNumber,
-		open: openNumber,
-		resolved: resolvedNumber,
-		closed: closedNumber,
+		status: "success",
+		data: {
+			pending: pendingNumber,
+			open: openNumber,
+			resolved: resolvedNumber,
+			closed: closedNumber,
+		},
 	});
 };
 
@@ -138,6 +148,12 @@ const updateComplaintStatus = async (req, res) => {
 		{ complaintId },
 		{ status }
 	);
+	await ActivityService.addActivity({
+		adminId: req.admin.adminId,
+		actionType: "complaint",
+		actionDone: "updated_complaint_status",
+		complaintId,
+	});
 	return res.status(StatusCodes.OK).json({
 		message: `Complaint with id ${complaintId} has its status to be updated as ${status}`,
 	});
@@ -145,7 +161,17 @@ const updateComplaintStatus = async (req, res) => {
 
 const getAllComplaints = async (req, res) => {
 	const complaints = await Complaint.find();
-	return res.status(StatusCodes.OK).json({ complaints });
+	if (complaints) {
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			data: complaints,
+		});
+	} else {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message: "Post not found",
+		});
+	}
 };
 
 const deleteComplaint = async (req, res) => {
@@ -159,12 +185,10 @@ const deleteComplaint = async (req, res) => {
 		complaintId,
 		userId: NULL,
 	});
-	return res
-		.status(StatusCodes.OK)
-		.json({
-			status: "success",
-			message: `Complaint with id ${complaintId} has been deleted`,
-		});
+	return res.status(StatusCodes.OK).json({
+		status: "success",
+		message: `Complaint with id ${complaintId} has been deleted`,
+	});
 };
 
 module.exports = {

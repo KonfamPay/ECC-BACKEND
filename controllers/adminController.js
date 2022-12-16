@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 const { sendMail } = require("../utils/node-mailer-transport");
 const { EmailCode, validateEmailCode } = require("../models/emailCode");
+const { ActivityService } = require("./activityController");
 
 const createAdmin = async (req, res) => {
 	try {
@@ -30,13 +31,21 @@ const createAdmin = async (req, res) => {
 		const { email, name, phoneNumber, role } = req.body;
 		admin = new Admin({ email, name, phoneNumber, role, password });
 		await admin.save();
-
+		await ActivityService.addActivity({
+			adminId: req.admin.adminId,
+			actionType: "admin",
+			actionDone: "created_admin",
+			complaintId: NULL,
+			userId: NULL,
+		});
 		return res.status(StatusCodes.CREATED).json({
-			status: StatusCodes.CREATED,
-			name: admin.name,
-			email: admin.email,
-			phoneNumber: admin.phoneNumber,
-			role: admin.role,
+			status: "success",
+			data: {
+				name: admin.name,
+				email: admin.email,
+				phoneNumber: admin.phoneNumber,
+				role: admin.role,
+			},
 		});
 	} catch (error) {
 		throw new Error("Failed to create the new admin");
