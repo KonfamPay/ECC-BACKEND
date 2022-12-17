@@ -83,7 +83,6 @@ const createNewComplaint = async (req, res) => {
 	let complaint = new Complaint(req.body);
 	let result = await complaint.save();
 	await ActivityService.addActivity({
-		adminId: NULL,
 		actionType: "complaint",
 		actionDone: "created_complaint",
 		complaintId: result._id,
@@ -183,7 +182,6 @@ const deleteComplaint = async (req, res) => {
 		actionType: "complaint",
 		actionDone: "deleted_complaint",
 		complaintId,
-		userId: NULL,
 	});
 	return res.status(StatusCodes.OK).json({
 		status: "success",

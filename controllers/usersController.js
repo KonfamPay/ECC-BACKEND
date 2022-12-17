@@ -242,7 +242,6 @@ const deleteUser = async (req, res) => {
 			adminId: req.admin.adminId,
 			actionType: "user",
 			actionDone: "deleted_user",
-			complaintId: NULL,
 			userId: userId,
 		});
 		return res.status(StatusCodes.OK).json({

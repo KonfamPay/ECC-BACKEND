@@ -7,6 +7,7 @@ const activitySchema = new mongoose.Schema(
 	{
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
+			default: null,
 			required: false,
 		},
 		actionType: {
@@ -41,6 +42,7 @@ const activitySchema = new mongoose.Schema(
 			maxlength: 50,
 			ref: "User",
 			required: false,
+			default: null,
 		},
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -48,12 +50,14 @@ const activitySchema = new mongoose.Schema(
 			maxlength: 50,
 			ref: "Admin",
 			required: false,
+			default: null,
 		},
 		complaintId: {
 			type: String,
 			minlength: 5,
 			maxlength: 100,
 			required: false,
+			default: null,
 		},
 	},
 	{ timestamps: true }

@@ -35,8 +35,6 @@ const createAdmin = async (req, res) => {
 			adminId: req.admin.adminId,
 			actionType: "admin",
 			actionDone: "created_admin",
-			complaintId: NULL,
-			userId: NULL,
 		});
 		return res.status(StatusCodes.CREATED).json({
 			status: "success",
@@ -164,7 +162,6 @@ const deleteAdmin = async (req, res) => {
 			adminId: req.admin.adminId,
 			actionType: "admin",
 			actionDone: "deleted_admin",
-			complaintId: NULL,
 			userId: adminId,
 		});
 		return res.status(StatusCodes.OK).json({
