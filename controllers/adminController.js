@@ -148,7 +148,7 @@ const veifyAdminLogin = async (req, res) => {
 		});
 	const token = admin.generateAuthToken();
 	const deleteEmailCode = await EmailCode.findByIdAndDelete(emailCode._id);
-	res.status(200).json({ status: "success", adminId, token });
+	res.status(StatusCodes.OK).json({ status: "success", adminId, token });
 };
 
 const deleteAdmin = async (req, res) => {
