@@ -4,9 +4,9 @@ const {
 	getAllActivity,
 	getActivityByAdmin,
 } = require("../controllers/activityController");
-const { admin } = require("../middleware/admin");
+const { admin, leadAdmin } = require("../middleware/admin");
 
 activityRouter.get("/", admin, getAllActivity);
-activityRouter.get("/:id", admin, getActivityByAdmin);
+activityRouter.get("/:id", leadAdmin, getActivityByAdmin);
 
 module.exports = activityRouter;
