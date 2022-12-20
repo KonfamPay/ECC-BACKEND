@@ -115,6 +115,12 @@ const complaintSchema = new mongoose.Schema(
 			required: true,
 			maxlength: 60,
 		},
+		replies: [
+			{
+				type: mongoose.Types.ObjectId,
+				ref: "Comment",
+			},
+		],
 	},
 	{ timestamps: true }
 );
