@@ -7,6 +7,7 @@ const activitySchema = new mongoose.Schema(
 	{
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
+			default: null,
 			required: false,
 		},
 		actionType: {
@@ -21,7 +22,7 @@ const activitySchema = new mongoose.Schema(
 			enum: [
 				"added_user",
 				"edited_user",
-				"deleted_user",
+				"deactivated_user",
 				"verified_user",
 				"created_complaint",
 				"approved_complaint",
@@ -30,6 +31,8 @@ const activitySchema = new mongoose.Schema(
 				"updated_complaint_status",
 				"created_admin",
 				"deleted_admin",
+				"created_reply",
+				"deleted_reply",
 			],
 			minlength: 5,
 			maxlength: 50,
@@ -41,6 +44,7 @@ const activitySchema = new mongoose.Schema(
 			maxlength: 50,
 			ref: "User",
 			required: false,
+			default: null,
 		},
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -48,12 +52,14 @@ const activitySchema = new mongoose.Schema(
 			maxlength: 50,
 			ref: "Admin",
 			required: false,
+			default: null,
 		},
 		complaintId: {
 			type: String,
 			minlength: 5,
 			maxlength: 100,
 			required: false,
+			default: null,
 		},
 	},
 	{ timestamps: true }
@@ -70,7 +76,7 @@ const validateActivity = (activity) => {
 			.valid(
 				"added_user",
 				"edited_user",
-				"deleted_user",
+				"deactivated_user",
 				"verified_user",
 				"created_complaint",
 				"approved_complaint",
@@ -78,7 +84,9 @@ const validateActivity = (activity) => {
 				"replied_complaint",
 				"updated_complaint_status",
 				"created_admin",
-				"deleted_admin"
+				"deleted_admin",
+				"created_reply",
+				"deleted_reply"
 			),
 		userId: Joi.string().min(5).max(50),
 		adminId: Joi.string().min(5).max(50),

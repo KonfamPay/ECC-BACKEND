@@ -229,7 +229,7 @@ const resendVerifyEmailCode = async (req, res) => {
 	}
 };
 
-const deleteUser = async (req, res) => {
+const deactivateUser = async (req, res) => {
 	const userId = req.params.id;
 	if (!mongoose.Types.ObjectId.isValid(userId))
 		return res
@@ -238,6 +238,12 @@ const deleteUser = async (req, res) => {
 	const user = await User.findById(userId);
 	if (user) {
 		await User.findByIdAndDelete(req.params.id);
+		await ActivityService.addActivity({
+			adminId: req.admin.adminId,
+			actionType: "user",
+			actionDone: "deleted_user",
+			userId: userId,
+		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
 			message: `This user with the id ${userId} has been deleted`,
@@ -254,5 +260,5 @@ module.exports = {
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
-	deleteUser,
+	deactivateUser,
 };

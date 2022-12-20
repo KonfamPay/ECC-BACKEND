@@ -35,8 +35,6 @@ const createAdmin = async (req, res) => {
 			adminId: req.admin.adminId,
 			actionType: "admin",
 			actionDone: "created_admin",
-			complaintId: NULL,
-			userId: NULL,
 		});
 		return res.status(StatusCodes.CREATED).json({
 			status: "success",
@@ -148,7 +146,39 @@ const veifyAdminLogin = async (req, res) => {
 		});
 	const token = admin.generateAuthToken();
 	const deleteEmailCode = await EmailCode.findByIdAndDelete(emailCode._id);
-	res.status(200).json({ status: "success", adminId, token });
+	res.status(StatusCodes.OK).json({ status: "success", adminId, token });
 };
 
-module.exports = { createAdmin, getAdminDetails, adminLogin, veifyAdminLogin };
+const deleteAdmin = async (req, res) => {
+	const adminId = req.params.id;
+	if (!mongoose.Types.ObjectId.isValid(adminId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This adminID is not valid" });
+	const admin = await Admin.findById(adminId);
+	if (admin) {
+		await Admin.findByIdAndDelete(adminId);
+		await ActivityService.addActivity({
+			adminId: req.admin.adminId,
+			actionType: "admin",
+			actionDone: "deleted_admin",
+			userId: adminId,
+		});
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			message: `This admin with the id ${adminId} has been deleted`,
+		});
+	} else {
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ status: "fail", message: "This admin does not exist!" });
+	}
+};
+
+module.exports = {
+	createAdmin,
+	getAdminDetails,
+	adminLogin,
+	veifyAdminLogin,
+	deleteAdmin,
+};
