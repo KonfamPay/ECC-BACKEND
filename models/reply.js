@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
-const replySchema = new Schema(
+const replySchema = new mongoose.Schema(
 	{
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,

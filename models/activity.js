@@ -31,6 +31,8 @@ const activitySchema = new mongoose.Schema(
 				"updated_complaint_status",
 				"created_admin",
 				"deleted_admin",
+				"created_reply",
+				"deleted_reply",
 			],
 			minlength: 5,
 			maxlength: 50,
@@ -82,7 +84,9 @@ const validateActivity = (activity) => {
 				"replied_complaint",
 				"updated_complaint_status",
 				"created_admin",
-				"deleted_admin"
+				"deleted_admin",
+				"created_reply",
+				"deleted_reply"
 			),
 		userId: Joi.string().min(5).max(50),
 		adminId: Joi.string().min(5).max(50),

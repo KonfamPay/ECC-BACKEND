@@ -118,7 +118,7 @@ const complaintSchema = new mongoose.Schema(
 		replies: [
 			{
 				type: mongoose.Types.ObjectId,
-				ref: "Comment",
+				ref: "Reply",
 			},
 		],
 	},
