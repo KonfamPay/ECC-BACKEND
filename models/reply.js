@@ -6,12 +6,12 @@ const replySchema = new Schema(
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Admi",
-			required: [true],
+			required: true,
 		},
 		complaintId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Complaint",
-			required: [true],
+			required: true,
 		},
 		content: { type: String, required: true },
 		uploadedDocuments: [
