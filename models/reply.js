@@ -5,7 +5,7 @@ const replySchema = new Schema(
 	{
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Admi",
+			ref: "Admin",
 			required: true,
 		},
 		complaintId: {

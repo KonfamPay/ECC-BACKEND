@@ -22,7 +22,7 @@ const activitySchema = new mongoose.Schema(
 			enum: [
 				"added_user",
 				"edited_user",
-				"deleted_user",
+				"deactivated_user",
 				"verified_user",
 				"created_complaint",
 				"approved_complaint",
@@ -74,7 +74,7 @@ const validateActivity = (activity) => {
 			.valid(
 				"added_user",
 				"edited_user",
-				"deleted_user",
+				"deactivated_user",
 				"verified_user",
 				"created_complaint",
 				"approved_complaint",

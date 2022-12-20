@@ -229,7 +229,7 @@ const resendVerifyEmailCode = async (req, res) => {
 	}
 };
 
-const deleteUser = async (req, res) => {
+const deactivateUser = async (req, res) => {
 	const userId = req.params.id;
 	if (!mongoose.Types.ObjectId.isValid(userId))
 		return res
@@ -260,5 +260,5 @@ module.exports = {
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
-	deleteUser,
+	deactivateUser,
 };
