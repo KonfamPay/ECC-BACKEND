@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { User } = require("./user");
-const { Admin } = require("./admin");
 
 const activitySchema = new mongoose.Schema(
 	{

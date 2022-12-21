@@ -118,9 +118,9 @@ const complaintSchema = new mongoose.Schema(
 		replies: [
 			{
 				type: mongoose.Types.ObjectId,
-				ref: "Reply",
 			},
 		],
+		isScam: { type: Boolean, default: false },
 	},
 	{ timestamps: true }
 );
