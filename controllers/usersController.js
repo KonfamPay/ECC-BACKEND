@@ -237,16 +237,20 @@ const deactivateUser = async (req, res) => {
 			.json({ status: "fail", message: "This UserId is not valid!" });
 	const user = await User.findById(userId);
 	if (user) {
-		await User.findByIdAndDelete(req.params.id);
+		await User.findByIdAndUpdate(
+			userId,
+			{ isDeactivated: true },
+			{ new: false }
+		);
 		await ActivityService.addActivity({
 			adminId: req.admin.adminId,
 			actionType: "user",
-			actionDone: "deleted_user",
+			actionDone: "deactivated_user",
 			userId: userId,
 		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
-			message: `This user with the id ${userId} has been deleted`,
+			message: `This user with the id ${userId} has been deactivated`,
 		});
 	} else {
 		return res

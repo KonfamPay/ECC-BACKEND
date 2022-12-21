@@ -86,6 +86,11 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		isDeactivated: {
+			type: Boolean,
+			maxlength: 4,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );
