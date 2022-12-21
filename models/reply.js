@@ -18,12 +18,15 @@ const replySchema = new mongoose.Schema(
 			{
 				documentName: {
 					type: String,
+					required: true,
 				},
 				documentId: {
 					type: String,
+					required: true,
 				},
 				documentUrl: {
 					type: String,
+					required: true,
 				},
 			},
 		],

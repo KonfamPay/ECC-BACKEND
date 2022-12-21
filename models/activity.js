@@ -12,7 +12,7 @@ const activitySchema = new mongoose.Schema(
 			type: String,
 			enum: ["user", "complaint", "admin"],
 			minlength: 4,
-			maxlength: 30,
+			maxlength: 9,
 			required: true,
 		},
 		actionDone: {
@@ -40,7 +40,7 @@ const activitySchema = new mongoose.Schema(
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			minlength: 5,
-			maxlength: 50,
+			maxlength: 24,
 			ref: "User",
 			required: false,
 			default: null,
@@ -48,7 +48,7 @@ const activitySchema = new mongoose.Schema(
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
 			minlength: 5,
-			maxlength: 50,
+			maxlength: 24,
 			ref: "Admin",
 			required: false,
 			default: null,
@@ -88,9 +88,9 @@ const validateActivity = (activity) => {
 				"created_reply",
 				"deleted_reply"
 			),
-		userId: Joi.string().min(5).max(50),
-		adminId: Joi.string().min(5).max(50),
-		complaintId: Joi.string().min(5).max(50),
+		userId: Joi.string().min(5).max(24),
+		adminId: Joi.string().min(5).max(24),
+		complaintId: Joi.string().min(5).max(24),
 	});
 	return schema.validate(activity);
 };
