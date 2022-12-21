@@ -6,7 +6,7 @@ const {
 } = require("../controllers/scammerController");
 const { admin, leadAdmin } = require("../middleware/admin");
 
-scammerRouter.post("/", admin, createNewScam);
-scammerRouter.delete("/", leadAdmin, deleteNewScam);
+scammerRouter.post("/", admin, createNewScammer);
+scammerRouter.delete("/", leadAdmin, deleteNewScammer);
 
 module.exports = scammerRouter;
