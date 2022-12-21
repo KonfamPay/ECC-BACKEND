@@ -275,7 +275,7 @@ const activateUser = async (req, res) => {
 		await ActivityService.addActivity({
 			adminId: req.admin.adminId,
 			actionType: "user",
-			actionDone: "deactivated_user",
+			actionDone: "activated_user",
 			userId: userId,
 		});
 		return res.status(StatusCodes.OK).json({
