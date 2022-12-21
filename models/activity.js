@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { User } = require("./user");
-const { Admin } = require("./admin");
 
 const activitySchema = new mongoose.Schema(
 	{
@@ -23,6 +21,7 @@ const activitySchema = new mongoose.Schema(
 				"added_user",
 				"edited_user",
 				"deactivated_user",
+				"activated_user",
 				"verified_user",
 				"created_complaint",
 				"approved_complaint",
@@ -77,6 +76,7 @@ const validateActivity = (activity) => {
 				"added_user",
 				"edited_user",
 				"deactivated_user",
+				"activated_user",
 				"verified_user",
 				"created_complaint",
 				"approved_complaint",

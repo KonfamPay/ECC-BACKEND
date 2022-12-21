@@ -237,16 +237,50 @@ const deactivateUser = async (req, res) => {
 			.json({ status: "fail", message: "This UserId is not valid!" });
 	const user = await User.findById(userId);
 	if (user) {
-		await User.findByIdAndDelete(req.params.id);
+		await User.findByIdAndUpdate(
+			userId,
+			{ isDeactivated: true },
+			{ new: false }
+		);
 		await ActivityService.addActivity({
 			adminId: req.admin.adminId,
 			actionType: "user",
-			actionDone: "deleted_user",
+			actionDone: "deactivated_user",
 			userId: userId,
 		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
-			message: `This user with the id ${userId} has been deleted`,
+			message: `This user with the id ${userId} has been deactivated`,
+		});
+	} else {
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ status: "fail", message: "This user does not exist!" });
+	}
+};
+
+const activateUser = async (req, res) => {
+	const userId = req.params.id;
+	if (!mongoose.Types.ObjectId.isValid(userId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+		.json({ status: "fail", message: "This UserId is not valid!" });
+	const user = await User.findById(userId);
+	if (user) {
+		await User.findByIdAndUpdate(
+			userId,
+			{ isDeactivated: false },
+			{ new: false }
+		);
+		await ActivityService.addActivity({
+			adminId: req.admin.adminId,
+			actionType: "user",
+			actionDone: "activated_user",
+			userId: userId,
+		});
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			message: `This user with the id ${userId} has been deactivated`,
 		});
 	} else {
 		return res
@@ -261,4 +295,5 @@ module.exports = {
 	verifyUserEmail,
 	resendVerifyEmailCode,
 	deactivateUser,
+	activateUser
 };

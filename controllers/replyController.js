@@ -45,23 +45,6 @@ const createAComplaintReply = async (req, res) => {
 };
 
 const deleteReply = async (req, res) => {
-	// const replyId = req.params.replyId;
-
-	// if (!mongoose.Types.ObjectId.isValid(replyId)) {
-	// 	throw new BadRequestError("Invalid complaint request Id");
-	// }
-
-	// const reply = new Reply({
-	// 	complaintId,
-	// });
-
-	// const createdReply = await reply.save();
-	// // update the replies for the comment schema
-
-	// return res.status(StatusCodes.CREATED).json({
-	// 	message: "Reply was created successfully ",
-	// 	data: createdReply,
-	// });
 	const { complaintId, replyId } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(replyId))
 		return res
@@ -88,6 +71,7 @@ const deleteReply = async (req, res) => {
 		return res.status(StatusCodes.OK).json({
 			status: "success",
 			message: `This reply with the id ${replyId} has been deleted`,
+			data: reply,
 		});
 	} else {
 		return res
