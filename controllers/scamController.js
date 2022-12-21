@@ -6,7 +6,7 @@ const { Complaint } = require("../models/complaint");
 const { ActivityService } = require("./activityController");
 
 const createNewScam = async (req, res) => {
-	const { adminId } = req.adminId;
+	const { adminId } = req.admin;
 	const { content } = req.body;
 	const { id: complaintId } = req.params;
 
