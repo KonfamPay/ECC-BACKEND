@@ -21,6 +21,7 @@ module.exports = (app) => {
 	app.use("/api/image", image);
 	app.use("/api/complaints", complaints);
 	app.use("/api/reply", reply);
+	app.use("/api/scammer", reply);
 	app.use("/api/notifications", notifications);
 	app.get("*", (req, res) => {
 		res.sendStatus(StatusCodes.NOT_FOUND);
