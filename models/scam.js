@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 
 const scamSchema = new mongoose.Schema(
 	{
+    adminId: {
+      type: mongoose.Schema.Types.ObjectId,
+      minlength: 1,
+      maxlength: 24,
+      required: true,
+    },
 		complaintId: {
-			type: mongoose.Schema.Types.ObjectId,
-			minlength: 1,
-			maxlength: 24,
-			required: true,
-		},
-		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
 			minlength: 1,
 			maxlength: 24,
