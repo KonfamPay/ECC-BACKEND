@@ -59,7 +59,14 @@ const activitySchema = new mongoose.Schema(
 		complaintId: {
 			type: String,
 			minlength: 5,
-			maxlength: 100,
+			maxlength: 24,
+			required: false,
+			default: null,
+		},
+		scammerId: {
+			type: mongoose.Schema.Types.ObjectId,
+			minlength: 1,
+			maxlength: 24,
 			required: false,
 			default: null,
 		},
@@ -100,6 +107,7 @@ const validateActivity = (activity) => {
 		userId: Joi.string().min(5).max(24),
 		adminId: Joi.string().min(5).max(24),
 		complaintId: Joi.string().min(5).max(24),
+		scammerId: Joi.string().min(5).max(24),
 	});
 	return schema.validate(activity);
 };

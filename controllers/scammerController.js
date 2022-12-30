@@ -19,16 +19,6 @@ const createNewScammer = async (req, res) => {
 
 	let findScammer;
 
-	let scammer = new Scammer({
-		name,
-		bankDetails,
-		phoneNumber,
-		emailAddresses,
-		website,
-		socialMediaHandles,
-		adminId,
-	});
-
 	if (name) {
 		findScammer = await Scammer.findOne({
 			name: { $all: name },
@@ -48,23 +38,33 @@ const createNewScammer = async (req, res) => {
 			socialMediaHandles: { $all: socialMediaHandles },
 		});
 	}
+
+	let scammer = new Scammer({
+		name,
+		bankDetails,
+		phoneNumber,
+		emailAddresses,
+		website,
+		socialMediaHandles,
+		adminId,
+	});
+	// console.log(scammer)
+	let result = await scammer.save();
 	if (findScammer) {
-		console.log(findScammer[0]);
 		return res.status(StatusCodes.OK).json({
 			message: `This scammer already exists in our database kindly up it to the scammer with the id '${findScammer._id}'`,
 		});
 	} else {
-		await scammer.save();
 		await ActivityService.addActivity({
-			actionType: "complaint",
-			actionDone: "created_complaint",
-			complaintId: result._id,
-			userId,
+			actionType: "scammer",
+			actionDone: "created_scammer",
+			adminId,
+			scammerId: result.id, 
 		});
 		return res.status(StatusCodes.CREATED).json({
 			status: "success",
 			message: "Scammer was created successfully ",
-			data: scammer,
+			data: result,
 		});
 	}
 };
