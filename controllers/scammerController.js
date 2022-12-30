@@ -48,7 +48,6 @@ const createNewScammer = async (req, res) => {
 		socialMediaHandles,
 		adminId,
 	});
-	// console.log(scammer)
 	let result = await scammer.save();
 	if (findScammer) {
 		return res.status(StatusCodes.OK).json({
@@ -59,7 +58,7 @@ const createNewScammer = async (req, res) => {
 			actionType: "scammer",
 			actionDone: "created_scammer",
 			adminId,
-			scammerId: result.id, 
+			scammerId: result.id,
 		});
 		return res.status(StatusCodes.CREATED).json({
 			status: "success",
@@ -70,38 +69,29 @@ const createNewScammer = async (req, res) => {
 };
 
 const deleteScammer = async (req, res) => {
-	const { complaintId, replyId } = req.params;
-	if (!mongoose.Types.ObjectId.isValid(replyId))
+	const { scammerId } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(scammerId))
 		return res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ status: "fail", message: "This replyId is not valid!" });
-	const reply = await Reply.findById(replyId);
-	if (reply) {
-		await Reply.findByIdAndDelete(replyId);
-		await Complaint.findByIdAndUpdate(
-			complaintId,
-			{
-				$pull: {
-					replies: replyId,
-				},
-			},
-			{ new: true }
-		);
+			.json({ status: "fail", message: "This scammerId is not valid!" });
+	const scammer = await Scammer.findById(scammerId);
+	if (scammer) {
+		await Reply.findByIdAndDelete(scammerId);
 		await ActivityService.addActivity({
 			adminId: req.admin.adminId,
-			actionType: "complaint",
-			actionDone: "deleted_reply",
-			complaintId: complaintId,
+			actionType: "scammer",
+			actionDone: "deleted_scammer",
+			scammerId,
 		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
-			message: `This reply with the id ${replyId} has been deleted`,
-			data: reply,
+			message: `This scammer with the id ${scammerId} has been deleted`,
+			data: scammer,
 		});
 	} else {
 		return res
 			.status(StatusCodes.NOT_FOUND)
-			.json({ status: "fail", message: "This reply does not exist!" });
+			.json({ status: "fail", message: "This scammer does not exist!" });
 	}
 };
 
