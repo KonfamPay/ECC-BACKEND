@@ -5,7 +5,7 @@ const scammerSchema = new mongoose.Schema(
 	{
 		name: [{ type: String, minlength: 2, maxlength: 50 }],
 		bankDetails: [{ type: String, minlength: 2, maxlength: 11 }],
-		phoneNumber: [{ type: String, minlength: 2, maxlength: 11 }],
+		phoneNumber: [{ type: String, minlength: 2, maxlength: 15 }],
 		emailAddresses: [{ type: String, minlength: 2, maxlength: 50 }],
 		website: [{ type: String, minlength: 2, maxlength: 50 }],
 		socialMediaHandles: [{ type: String, minlength: 2, maxlength: 50 }],
@@ -19,11 +19,15 @@ const scammerSchema = new mongoose.Schema(
 
 const validateScammer = (payload) => {
 	const schema = Joi.object({
-		userId: Joi.required(),
-		title: Joi.string().required(),
-		message: Joi.string().required(),
-		type: Joi.string().required(),
-		//   .valid("open", "resolved", "pending", "closed", "account"),
+		name: Joi.min(2).max(50).required(),
+		bankDetails: Joi.array().items(Joi.string().min(2).max(11)).default([]),
+		phoneNumber: Joi.array().items(Joi.string().min(2).max(15)).default([]),
+		emailAddresses: Joi.array().items(Joi.string().min(2).max(50)).default([]),
+		website: Joi.array().items(Joi.string().min(2).max(50)).default([]),
+		socialMediaHandles: Joi.array()
+			.items(Joi.string().min(2).max(20))
+			.default([]),
+		adminId: Joi.string().min(2).max(25).required(),
 	});
 	return schema.validate(payload);
 };

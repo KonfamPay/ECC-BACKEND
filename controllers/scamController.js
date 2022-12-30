@@ -5,7 +5,7 @@ const { Reply } = require("../models/reply");
 const { Complaint } = require("../models/complaint");
 const { ActivityService } = require("./activityController");
 
-const createAComplaintReply = async (req, res) => {
+const createNewScam = async (req, res) => {
 	const { adminId } = req.admin;
 	const { content } = req.body;
 	const { id: complaintId } = req.params;
@@ -44,7 +44,7 @@ const createAComplaintReply = async (req, res) => {
 	});
 };
 
-const deleteReply = async (req, res) => {
+const deleteNewScam = async (req, res) => {
 	const { complaintId, replyId } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(replyId))
 		return res
@@ -81,6 +81,6 @@ const deleteReply = async (req, res) => {
 };
 
 module.exports = {
-	createAComplaintReply,
-	deleteReply,
+	createNewScam,
+	deleteNewScam,
 };

@@ -280,7 +280,7 @@ const activateUser = async (req, res) => {
 		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
-			message: `This user with the id ${userId} has been deactivated`,
+			message: `This user with the id ${userId} has been activated`,
 		});
 	} else {
 		return res
