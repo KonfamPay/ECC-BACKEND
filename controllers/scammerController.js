@@ -30,44 +30,38 @@ const createNewScammer = async (req, res) => {
 	});
 
 	if (name) {
-		findScammer = await Scammer.find({
+		findScammer = await Scammer.findOne({
 			name: { $all: name },
 		});
 		// console.log(findScammer);
 	} else if (bankDetails) {
-		findScammer = await Scammer.find({ bankDetails: { $all: bankDetails } });
+		findScammer = await Scammer.findOne({ bankDetails: { $all: bankDetails } });
 	} else if (phoneNumber) {
-		findScammer = await Scammer.find({ phoneNumber: { $all: phoneNumber } });
+		findScammer = await Scammer.findOne({ phoneNumber: { $all: phoneNumber } });
 	} else if (emailAddresses) {
-		findScammer = await Scammer.find({
+		findScammer = await Scammer.findOne({
 			emailAddresses: { $all: emailAddresses },
 		});
 	} else if (website) {
-		findScammer = await Scammer.find({ website: { $all: website } });
+		findScammer = await Scammer.findOne({ website: { $all: website } });
 	} else if (socialMediaHandles) {
-		findScammer = await Scammer.find({
+		findScammer = await Scammer.findOne({
 			socialMediaHandles: { $all: socialMediaHandles },
 		});
 	}
-
-	// let findScammer =
-	// 	(await Scammer.find({ emailAddresses: { $all: emailAddresses } })) ||
-	// 	(await Scammer.find({ name: { $all: name } }));
-	console.log(findScammer);
-	// if (findScammer) {
-	// 	// let getScammerDetails = await Scammer.findById(findScammer._id);
-	// 	return res.status(StatusCodes.NOT_FOUND).json({
-	// 		message: `This scammer already exists in our database kindly add it to the scammer with the name `,
-	// 		// message: `This scammer already exists in our database kindly add it to the scammer with the name ${getScammerDetails.name}`,
-	// 	});
-	// }
-
-	await scammer.save();
-	return res.status(StatusCodes.CREATED).json({
-		status: "success",
-		message: "Scammer was created successfully ",
-		// data: scammer,
-	});
+	if (findScammer) {
+		console.log(findScammer[0]);
+		return res.status(StatusCodes.OK).json({
+			message: `This scammer already exists in our database kindly up it to the scammer with the id '${findScammer._id}'`,
+		});
+	} else {
+		await scammer.save();
+		return res.status(StatusCodes.CREATED).json({
+			status: "success",
+			message: "Scammer was created successfully ",
+			data: scammer,
+		});
+	}
 };
 
 const deleteNewScammer = async (req, res) => {
