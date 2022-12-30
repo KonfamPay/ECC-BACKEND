@@ -72,32 +72,6 @@ const createNewScammer = async (req, res) => {
 	}
 };
 
-const deleteScammer = async (req, res) => {
-	const { scammerId } = req.params;
-	if (!mongoose.Types.ObjectId.isValid(scammerId))
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ status: "fail", message: "This scammerId is not valid!" });
-	const scammer = await Scammer.findById(scammerId);
-	if (scammer) {
-		await Reply.findByIdAndDelete(scammerId);
-		await ActivityService.addActivity({
-			adminId: req.admin.adminId,
-			actionType: "scammer",
-			actionDone: "deleted_scammer",
-			scammerId,
-		});
-		return res.status(StatusCodes.OK).json({
-			status: "success",
-			message: `This scammer with the id ${scammerId} has been deleted`,
-			data: scammer,
-		});
-	} else {
-		return res
-			.status(StatusCodes.NOT_FOUND)
-			.json({ status: "fail", message: "This scammer does not exist!" });
-	}
-};
 
 const getAllScammers = async (req, res) => {
 	const scammers = await Scammer.find();
@@ -125,11 +99,11 @@ const updateScammer = async (req, res) => {
 	} = req.body;
 	const { adminId } = req.admin;
 	const { scammerId } = req.params;
-
+	
 	if (!mongoose.Types.ObjectId.isValid(scammerId)) {
 		throw new BadRequestError("Invalid scammer id");
 	}
-
+	
 	if (!req.body) {
 		return res.status(StatusCodes.NO_CONTENT).json({
 			status: "fail",
@@ -147,23 +121,50 @@ const updateScammer = async (req, res) => {
 			socialMediaHandles,
 		},
 		{ new: true, useFindAndModify: false }
-	);
-	await ActivityService.addActivity({
-		adminId,
-		actionType: "scammer",
-		actionDone: "updated_scammer",
-		scammerId,
-	});
-	return res.status(StatusCodes.CREATED).json({
-		status: "success",
-		message: "Scammer was updated successfully ",
-		data: updateScammer,
-	});
-};
-
-module.exports = {
-	createNewScammer,
-	getAllScammers,
-	updateScammer,
-	deleteScammer,
+		);
+		await ActivityService.addActivity({
+			adminId,
+			actionType: "scammer",
+			actionDone: "updated_scammer",
+			scammerId,
+		});
+		return res.status(StatusCodes.CREATED).json({
+			status: "success",
+			message: "Scammer was updated successfully ",
+			data: updateScammer,
+		});
+	};
+	
+	const deleteScammer = async (req, res) => {
+		const { scammerId } = req.params;
+		if (!mongoose.Types.ObjectId.isValid(scammerId))
+			return res
+				.status(StatusCodes.BAD_REQUEST)
+				.json({ status: "fail", message: "This scammerId is not valid!" });
+		const scammer = await Scammer.findById(scammerId);
+		if (scammer) {
+			await Reply.findByIdAndDelete(scammerId);
+			await ActivityService.addActivity({
+				adminId: req.admin.adminId,
+				actionType: "scammer",
+				actionDone: "deleted_scammer",
+				scammerId,
+			});
+			return res.status(StatusCodes.OK).json({
+				status: "success",
+				message: `This scammer with the id ${scammerId} has been deleted`,
+				data: scammer,
+			});
+		} else {
+			return res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ status: "fail", message: "This scammer does not exist!" });
+		}
+	};
+	
+	module.exports = {
+		createNewScammer,
+		getAllScammers,
+		updateScammer,
+		deleteScammer,
 };
