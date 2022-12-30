@@ -80,7 +80,23 @@ const createNewComplaint = async (req, res) => {
 			message: "Each additional document must have a url and a cloudinaryId",
 		});
 
-	let complaint = new Complaint(req.body);
+	let complaint = new Complaint({
+		userId,
+		title,
+		complaintLocation,
+		brandName,
+		brandContact,
+		productCategory,
+		brandBankAccountNumber,
+		brandBankAccountName,
+		brandBank,
+		brandSocialMediaHandle,
+		additionalDocuments,
+		complaintAmount,
+		transactionReceipt,
+		details,
+		resolution,
+	});
 	let result = await complaint.save();
 	await ActivityService.addActivity({
 		actionType: "complaint",

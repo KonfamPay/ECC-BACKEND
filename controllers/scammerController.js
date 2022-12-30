@@ -4,43 +4,43 @@ const { StatusCodes } = require("http-status-codes");
 const { Reply } = require("../models/reply");
 const { Complaint } = require("../models/complaint");
 const { ActivityService } = require("./activityController");
+const { Scammer } = require("../models/scammer");
 
 const createNewScammer = async (req, res) => {
 	const { adminId } = req.admin;
-	const { content } = req.body;
-	const { id: complaintId } = req.params;
+	const {
+		name,
+		bankDetails,
+		phoneNumber,
+		emailAddresses,
+		website,
+		socialMediaHandles,
+	} = req.body;
 
-	if (!mongoose.Types.ObjectId.isValid(complaintId)) {
-		throw new BadRequestError("Invalid complaint request Id");
-	}
-
-	if (!content) {
-		return res.status(StatusCodes.NO_CONTENT).json({
-			message: "All Fields are required",
+	let findScammer =
+		(await Scammer.findOne({ emailAddresses })) ||
+		(await Scammer.findOne({ name }));
+	console.log(findScammer);
+	if (findScammer) {
+		// let getScammerDetails = await Scammer.findById(findScammer._id);
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message: `This scammer already exists in our database kindly add it to the scammer with the name `,
 		});
 	}
-
-	const reply = new Reply({
-		complaintId,
+	let scammer = new Scammer({
+		name,
+		bankDetails,
+		phoneNumber,
+		emailAddresses,
+		website,
+		socialMediaHandles,
 		adminId,
-		content,
 	});
-
-	const createdReply = await reply.save();
-	// update the replies for the comment schema
-
-	await Complaint.findByIdAndUpdate(
-		complaintId,
-		{
-			$push: { replies: createdReply.id },
-		},
-		{ new: true, useFindAndModify: false }
-	);
-
+	await scammer.save();
 	return res.status(StatusCodes.CREATED).json({
 		status: "success",
-		message: "Reply was created successfully ",
-		data: createdReply,
+		message: "Scammer was created successfully ",
+		// data: scammer,
 	});
 };
 
