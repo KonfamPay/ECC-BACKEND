@@ -1,8 +1,6 @@
-const { Admin } = require("../models/admin");
 const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 const { Reply } = require("../models/reply");
-const { Complaint } = require("../models/complaint");
 const { ActivityService } = require("./activityController");
 const { Scammer } = require("../models/scammer");
 
@@ -95,7 +93,23 @@ const deleteScammer = async (req, res) => {
 	}
 };
 
+const getAllScammers = async (req, res) => {
+	const scammers = await Scammer.find();
+	if (scammers) {
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			data: scammers,
+		});
+	} else {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message: "No scammer is in the database",
+		});
+	}
+};
+
 module.exports = {
 	createNewScammer,
+	getAllScammers,
 	deleteScammer,
 };

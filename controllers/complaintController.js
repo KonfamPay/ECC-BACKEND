@@ -184,7 +184,7 @@ const getAllComplaints = async (req, res) => {
 	} else {
 		return res.status(StatusCodes.NOT_FOUND).json({
 			status: "fail",
-			message: "Post not found",
+			message: "Complaint not found",
 		});
 	}
 };
