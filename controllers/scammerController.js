@@ -108,8 +108,50 @@ const getAllScammers = async (req, res) => {
 	}
 };
 
+const updateScammer = async (req, res) => {
+	const {
+		name,
+		bankDetails,
+		phoneNumber,
+		emailAddresses,
+		website,
+		socialMediaHandles,
+	} = req.body;
+	const { adminId } = req.admin;
+	const { scammerId } = req.params;
+
+	if (!mongoose.Types.ObjectId.isValid(scammerId)) {
+		throw new BadRequestError("Invalid scammer id");
+	}
+
+	if (!req.body) {
+		return res.status(StatusCodes.NO_CONTENT).json({
+			message: "Fields cannot be empty",
+		});
+	}
+	let updateScammer = await Scammer.findByIdAndUpdate(
+		scammerId,
+		{
+			name,
+			bankDetails,
+			phoneNumber,
+			emailAddresses,
+			website,
+			socialMediaHandles,
+		},
+		{ new: true, useFindAndModify: false }
+	);
+
+	return res.status(StatusCodes.CREATED).json({
+		status: "success",
+		message: "Scammer was updated successfully ",
+		data: updateScammer,
+	});
+};
+
 module.exports = {
 	createNewScammer,
 	getAllScammers,
+	updateScammer,
 	deleteScammer,
 };
