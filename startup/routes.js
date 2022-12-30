@@ -10,6 +10,8 @@ const image = require("../routes/image");
 const notifications = require("../routes/notifications");
 const complaints = require("../routes/complaint");
 const reply = require("../routes/reply");
+const scammer = require("../routes/scammer");
+const scam = require("../routes/scam");
 
 module.exports = (app) => {
 	app.use("/api/admin", admin);
@@ -21,7 +23,8 @@ module.exports = (app) => {
 	app.use("/api/image", image);
 	app.use("/api/complaints", complaints);
 	app.use("/api/reply", reply);
-	app.use("/api/scammer", reply);
+	app.use("/api/scammer", scammer);
+	app.use("/api/scam", scam);
 	app.use("/api/notifications", notifications);
 	app.get("*", (req, res) => {
 		res.sendStatus(StatusCodes.NOT_FOUND);
