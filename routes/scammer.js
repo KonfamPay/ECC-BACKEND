@@ -2,11 +2,11 @@ const express = require("express");
 const scammerRouter = express.Router();
 const {
 	createNewScammer,
-	deleteNewScammer,
+	deleteScammer,
 } = require("../controllers/scammerController");
 const { admin, leadAdmin } = require("../middleware/admin");
 
 scammerRouter.post("/", admin, createNewScammer);
-scammerRouter.delete("/", leadAdmin, deleteNewScammer);
+scammerRouter.delete("/", leadAdmin, deleteScammer);
 
 module.exports = scammerRouter;
