@@ -15,6 +15,12 @@ const createNewScammer = async (req, res) => {
 		socialMediaHandles,
 	} = req.body;
 
+	if (!req.body) {
+		return res.status(StatusCodes.NO_CONTENT).json({
+			message: "Fields cannot be empty",
+		});
+	}
+	
 	let findScammer;
 
 	if (name) {
@@ -126,6 +132,7 @@ const updateScammer = async (req, res) => {
 
 	if (!req.body) {
 		return res.status(StatusCodes.NO_CONTENT).json({
+			status: "fail",
 			message: "Fields cannot be empty",
 		});
 	}
@@ -141,7 +148,12 @@ const updateScammer = async (req, res) => {
 		},
 		{ new: true, useFindAndModify: false }
 	);
-
+	await ActivityService.addActivity({
+		adminId,
+		actionType: "scammer",
+		actionDone: "updated_scammer",
+		scammerId,
+	});
 	return res.status(StatusCodes.CREATED).json({
 		status: "success",
 		message: "Scammer was updated successfully ",
