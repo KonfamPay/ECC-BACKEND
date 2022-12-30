@@ -10,7 +10,7 @@ const activitySchema = new mongoose.Schema(
 		},
 		actionType: {
 			type: String,
-			enum: ["user", "complaint", "admin"],
+			enum: ["user", "complaint", "admin", "scammer"],
 			minlength: 4,
 			maxlength: 9,
 			required: true,
@@ -32,6 +32,9 @@ const activitySchema = new mongoose.Schema(
 				"deleted_admin",
 				"created_reply",
 				"deleted_reply",
+				"created_scammer",
+				"updated_scammer",
+				"deleted_scammer",
 			],
 			minlength: 5,
 			maxlength: 50,
@@ -56,7 +59,14 @@ const activitySchema = new mongoose.Schema(
 		complaintId: {
 			type: String,
 			minlength: 5,
-			maxlength: 100,
+			maxlength: 24,
+			required: false,
+			default: null,
+		},
+		scammerId: {
+			type: mongoose.Schema.Types.ObjectId,
+			minlength: 1,
+			maxlength: 24,
 			required: false,
 			default: null,
 		},
@@ -68,7 +78,10 @@ const activitySchema = new mongoose.Schema(
 const validateActivity = (activity) => {
 	const schema = Joi.object({
 		adminId: Joi.string().min(5).max(301).required(),
-		actionType: Joi.string().min(5).max(30).valid("user", "complaint", "admin"),
+		actionType: Joi.string()
+			.min(5)
+			.max(30)
+			.valid("user", "complaint", "admin", "scammer"),
 		actionDone: Joi.string()
 			.min(5)
 			.max(25)
@@ -86,11 +99,15 @@ const validateActivity = (activity) => {
 				"created_admin",
 				"deleted_admin",
 				"created_reply",
-				"deleted_reply"
+				"deleted_reply",
+				"created_scammer",
+				"updated_scammer",
+				"deleted_scammer"
 			),
 		userId: Joi.string().min(5).max(24),
 		adminId: Joi.string().min(5).max(24),
 		complaintId: Joi.string().min(5).max(24),
+		scammerId: Joi.string().min(5).max(24),
 	});
 	return schema.validate(activity);
 };

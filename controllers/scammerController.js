@@ -19,21 +19,10 @@ const createNewScammer = async (req, res) => {
 
 	let findScammer;
 
-	let scammer = new Scammer({
-		name,
-		bankDetails,
-		phoneNumber,
-		emailAddresses,
-		website,
-		socialMediaHandles,
-		adminId,
-	});
-
 	if (name) {
 		findScammer = await Scammer.findOne({
 			name: { $all: name },
 		});
-		// console.log(findScammer);
 	} else if (bankDetails) {
 		findScammer = await Scammer.findOne({ bankDetails: { $all: bankDetails } });
 	} else if (phoneNumber) {
@@ -49,22 +38,38 @@ const createNewScammer = async (req, res) => {
 			socialMediaHandles: { $all: socialMediaHandles },
 		});
 	}
+
+	let scammer = new Scammer({
+		name,
+		bankDetails,
+		phoneNumber,
+		emailAddresses,
+		website,
+		socialMediaHandles,
+		adminId,
+	});
+	// console.log(scammer)
+	let result = await scammer.save();
 	if (findScammer) {
-		console.log(findScammer[0]);
 		return res.status(StatusCodes.OK).json({
 			message: `This scammer already exists in our database kindly up it to the scammer with the id '${findScammer._id}'`,
 		});
 	} else {
-		await scammer.save();
+		await ActivityService.addActivity({
+			actionType: "scammer",
+			actionDone: "created_scammer",
+			adminId,
+			scammerId: result.id, 
+		});
 		return res.status(StatusCodes.CREATED).json({
 			status: "success",
 			message: "Scammer was created successfully ",
-			data: scammer,
+			data: result,
 		});
 	}
 };
 
-const deleteNewScammer = async (req, res) => {
+const deleteScammer = async (req, res) => {
 	const { complaintId, replyId } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(replyId))
 		return res
@@ -102,5 +107,5 @@ const deleteNewScammer = async (req, res) => {
 
 module.exports = {
 	createNewScammer,
-	deleteNewScammer,
+	deleteScammer,
 };
