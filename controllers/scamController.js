@@ -26,13 +26,13 @@ const createNewScamReport = async (req, res) => {
 	});
 
 	await scam.save();
-
+	
 	await ActivityService.addActivity({
 		actionType: "scam",
 		actionDone: "created_scam",
 		adminId,
 		complaintId,
-		scamId: scam._id,
+		scamId: scam.id,
 		scammerId,
 	});
 
