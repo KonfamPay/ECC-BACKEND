@@ -11,7 +11,7 @@ const createAComplaintReply = async (req, res) => {
 	const { id: complaintId } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(complaintId)) {
-		throw new BadRequestError("Invalid complaint request Id");
+		throw new Error("Invalid complaint request Id");
 	}
 
 	if (!content) {

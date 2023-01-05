@@ -90,7 +90,7 @@ const getAllScammers = async (req, res) => {
 const getScammer = async (req, res) => {
 	const id = req.params.scammerId;
 	if (!mongoose.Types.ObjectId.isValid(id)) {
-		throw new BadRequestError("Invalid complaint request Id");
+		throw new Error("Invalid complaint request Id");
 	}
 	const scammers = await Scammer.findById(id);
 	if (scammers) {
@@ -119,7 +119,7 @@ const updateScammer = async (req, res) => {
 	const { scammerId } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(scammerId)) {
-		throw new BadRequestError("Invalid scammer id");
+		throw new Error("Invalid scammer id");
 	}
 
 	if (!req.body) {
