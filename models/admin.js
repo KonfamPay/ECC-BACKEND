@@ -74,7 +74,7 @@ const validateAdmin = (admin) => {
 
 const validateVerifyInputs = (payload) => {
 	const schema = Joi.object({
-		name: Joi.string().min(5).max(5).required().label("Name"),
+		name: Joi.string().min(4).max(18).required().label("Name"),
 		email: Joi.string()
 			.email({ minDomainSegments: 2, tlds: { allow: false } })
 			.min(3)
@@ -88,7 +88,7 @@ const validateVerifyInputs = (payload) => {
 		role: Joi.string().min(4).max(10).valid("admin", "Lead-admin"),
 		password: Joi.string().min(8).max(40).required().label("Password"),
 	});
-	return schema.validate(admin);
+	return schema.validate(payload);
 };
 
 module.exports = { Admin, validateAdmin, validateVerifyInputs };

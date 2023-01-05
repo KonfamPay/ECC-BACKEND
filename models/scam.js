@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 
 const scamSchema = new mongoose.Schema(
 	{
-    adminId: {
-      type: mongoose.Schema.Types.ObjectId,
-      minlength: 1,
-      maxlength: 24,
-      required: true,
-    },
+		adminId: {
+			type: mongoose.Schema.Types.ObjectId,
+			minlength: 1,
+			maxlength: 24,
+			required: true,
+		},
 		complaintId: {
 			type: mongoose.Schema.Types.ObjectId,
 			minlength: 1,
@@ -34,14 +34,17 @@ const scamSchema = new mongoose.Schema(
 					minlength: 1,
 					maxlength: 50,
 					required: true,
+					default: null,
 				},
 				documentId: {
 					type: String,
 					required: true,
+					default: null,
 				},
 				documentUrl: {
 					type: String,
 					required: true,
+					default: null,
 				},
 			},
 		],
@@ -55,9 +58,7 @@ const validateScam = (payload) => {
 		adminId: Joi.string().min(1).max(24).required(),
 		scammerId: Joi.string().min(1).max(24).required(),
 		reportContent: Joi.string().min(1).max(500).required(),
-		reportDocuments: Joi.array()
-			.items(Joi.string().min(1).max(50))
-			.default([]),
+		reportDocuments: Joi.array().items(Joi.string().min(1).max(50)).default([]),
 	});
 	return schema.validate(payload);
 };

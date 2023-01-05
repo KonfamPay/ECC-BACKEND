@@ -89,6 +89,9 @@ const getAllScammers = async (req, res) => {
 
 const getScammer = async (req, res) => {
 	const id = req.params.scammerId;
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		throw new BadRequestError("Invalid complaint request Id");
+	}
 	const scammers = await Scammer.findById(id);
 	if (scammers) {
 		return res.status(StatusCodes.OK).json({

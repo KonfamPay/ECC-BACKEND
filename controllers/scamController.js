@@ -4,43 +4,41 @@ const { StatusCodes } = require("http-status-codes");
 const { Reply } = require("../models/reply");
 const { Complaint } = require("../models/complaint");
 const { ActivityService } = require("./activityController");
+const { Scam } = require("../models/scam");
 
-const createNewScam = async (req, res) => {
+const createNewScamReport = async (req, res) => {
 	const { adminId } = req.admin;
-	const { content } = req.body;
-	const { id: complaintId } = req.params;
+	const { scammerId } = req.params;
+	const { reportContent, complaintId } = req.body;
 
-	if (!mongoose.Types.ObjectId.isValid(complaintId)) {
-		throw new BadRequestError("Invalid complaint request Id");
+	if (
+		!mongoose.Types.ObjectId.isValid(scammerId) ||
+		!mongoose.Types.ObjectId.isValid(complaintId)
+	) {
+		throw new Error("Invalid complain or scammer Id");
 	}
 
-	if (!content) {
-		return res.status(StatusCodes.NO_CONTENT).json({
-			message: "All Fields are required",
-		});
-	}
-
-	const reply = new Reply({
-		complaintId,
+	let scam = new Scam({
 		adminId,
-		content,
+		complaintId,
+		scammerId,
+		reportContent,
 	});
 
-	const createdReply = await reply.save();
-	// update the replies for the comment schema
+	await scam.save();
 
-	await Complaint.findByIdAndUpdate(
+	await ActivityService.addActivity({
+		actionType: "scam",
+		actionDone: "created_scam",
+		adminId,
 		complaintId,
-		{
-			$push: { replies: createdReply.id },
-		},
-		{ new: true, useFindAndModify: false }
-	);
+		scamId: scam._id,
+		scammerId,
+	});
 
 	return res.status(StatusCodes.CREATED).json({
 		status: "success",
-		message: "Reply was created successfully ",
-		data: createdReply,
+		message: "Scam report was created successfully",
 	});
 };
 
@@ -81,6 +79,6 @@ const deleteNewScam = async (req, res) => {
 };
 
 module.exports = {
-	createNewScam,
+	createNewScamReport,
 	deleteNewScam,
 };
