@@ -10,7 +10,7 @@ const activitySchema = new mongoose.Schema(
 		},
 		actionType: {
 			type: String,
-			enum: ["user", "complaint", "admin", "scammer"],
+			enum: ["user", "complaint", "admin", "scam", "scammer"],
 			minlength: 4,
 			maxlength: 9,
 			required: true,
@@ -32,6 +32,9 @@ const activitySchema = new mongoose.Schema(
 				"deleted_admin",
 				"created_reply",
 				"deleted_reply",
+				"created_scam",
+				"updated_scam",
+				"deleted_scam",
 				"created_scammer",
 				"updated_scammer",
 				"deleted_scammer",
@@ -39,14 +42,6 @@ const activitySchema = new mongoose.Schema(
 			minlength: 5,
 			maxlength: 50,
 			required: true,
-		},
-		userId: {
-			type: mongoose.Schema.Types.ObjectId,
-			minlength: 5,
-			maxlength: 24,
-			ref: "User",
-			required: false,
-			default: null,
 		},
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -60,6 +55,15 @@ const activitySchema = new mongoose.Schema(
 			type: String,
 			minlength: 5,
 			maxlength: 24,
+			ref: "Complaint",
+			required: false,
+			default: null,
+		},
+		scamId: {
+			type: mongoose.Schema.Types.ObjectId,
+			minlength: 1,
+			maxlength: 24,
+			ref: "Scam",
 			required: false,
 			default: null,
 		},
@@ -67,6 +71,15 @@ const activitySchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			minlength: 1,
 			maxlength: 24,
+			ref: "Scammer",
+			required: false,
+			default: null,
+		},
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
+			minlength: 5,
+			maxlength: 24,
+			ref: "User",
 			required: false,
 			default: null,
 		},
@@ -81,7 +94,7 @@ const validateActivity = (activity) => {
 		actionType: Joi.string()
 			.min(5)
 			.max(30)
-			.valid("user", "complaint", "admin", "scammer"),
+			.valid("user", "complaint", "admin", "scam", "scammer"),
 		actionDone: Joi.string()
 			.min(5)
 			.max(25)
@@ -100,6 +113,9 @@ const validateActivity = (activity) => {
 				"deleted_admin",
 				"created_reply",
 				"deleted_reply",
+				"created_scam",
+				"updated_scam",
+				"deleted_scam",
 				"created_scammer",
 				"updated_scammer",
 				"deleted_scammer"
@@ -107,6 +123,7 @@ const validateActivity = (activity) => {
 		userId: Joi.string().min(5).max(24),
 		adminId: Joi.string().min(5).max(24),
 		complaintId: Joi.string().min(5).max(24),
+		scamId: Joi.string().min(5).max(24),
 		scammerId: Joi.string().min(5).max(24),
 	});
 	return schema.validate(activity);
