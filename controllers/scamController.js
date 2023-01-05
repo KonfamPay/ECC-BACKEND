@@ -39,6 +39,40 @@ const createNewScamReport = async (req, res) => {
 	});
 };
 
+const getAllScams = async (req, res) => {
+	const scam = await Scam.find();
+	if (scam) {
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			data: scam,
+		});
+	} else {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message: "No scammer is in the database",
+		});
+	}
+};
+
+const getScam = async (req, res) => {
+	const { scamId } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(scamId)) {
+		throw new Error("Invalid scam request Id");
+	}
+	const scam = await Scam.findById(scamId);
+	if (scam) {
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			data: scam,
+		});
+	} else {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message: "No scam with this id is in the database",
+		});
+	}
+};
+
 const deleteNewScamReport = async (req, res) => {
 	const { adminId } = req.admin;
 	const { scamId } = req.params;
@@ -57,7 +91,7 @@ const deleteNewScamReport = async (req, res) => {
 		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
-			message: `This scam with the id ${scamId} has been deleted`
+			message: `This scam with the id ${scamId} has been deleted`,
 		});
 	} else {
 		return res
@@ -68,5 +102,7 @@ const deleteNewScamReport = async (req, res) => {
 
 module.exports = {
 	createNewScamReport,
+	getAllScams,
+	getScam,
 	deleteNewScamReport,
 };
