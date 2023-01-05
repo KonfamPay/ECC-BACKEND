@@ -1,8 +1,5 @@
-const { Admin } = require("../models/admin");
 const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
-const { Reply } = require("../models/reply");
-const { Complaint } = require("../models/complaint");
 const { ActivityService } = require("./activityController");
 const { Scam } = require("../models/scam");
 
@@ -26,7 +23,7 @@ const createNewScamReport = async (req, res) => {
 	});
 
 	await scam.save();
-	
+
 	await ActivityService.addActivity({
 		actionType: "scam",
 		actionDone: "created_scam",
@@ -42,43 +39,34 @@ const createNewScamReport = async (req, res) => {
 	});
 };
 
-const deleteNewScam = async (req, res) => {
-	const { complaintId, replyId } = req.params;
-	if (!mongoose.Types.ObjectId.isValid(replyId))
+const deleteNewScamReport = async (req, res) => {
+	const { adminId } = req.admin;
+	const { scamId } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(scamId))
 		return res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ status: "fail", message: "This replyId is not valid!" });
-	const reply = await Reply.findById(replyId);
-	if (reply) {
-		await Reply.findByIdAndDelete(replyId);
-		await Complaint.findByIdAndUpdate(
-			complaintId,
-			{
-				$pull: {
-					replies: replyId,
-				},
-			},
-			{ new: true }
-		);
+			.json({ status: "fail", message: "This scamId is not valid!" });
+	const scam = await Scam.findById(scamId);
+	if (scamId) {
+		await Scam.findByIdAndDelete(scamId);
 		await ActivityService.addActivity({
-			adminId: req.admin.adminId,
-			actionType: "complaint",
-			actionDone: "deleted_reply",
-			complaintId: complaintId,
+			adminId,
+			actionType: "scam",
+			actionDone: "deleted_scam",
+			scamId,
 		});
 		return res.status(StatusCodes.OK).json({
 			status: "success",
-			message: `This reply with the id ${replyId} has been deleted`,
-			data: reply,
+			message: `This scam with the id ${scamId} has been deleted`
 		});
 	} else {
 		return res
 			.status(StatusCodes.NOT_FOUND)
-			.json({ status: "fail", message: "This reply does not exist!" });
+			.json({ status: "fail", message: "This scam does not exist!" });
 	}
 };
 
 module.exports = {
 	createNewScamReport,
-	deleteNewScam,
+	deleteNewScamReport,
 };
