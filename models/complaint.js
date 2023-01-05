@@ -60,7 +60,7 @@ const complaintSchema = new mongoose.Schema(
 			type: String,
 			required: false,
 			minlength: 3,
-			maxlength: 50,
+		maxlength: 50,
 		},
 		transactionReceipt: {
 			url: {
