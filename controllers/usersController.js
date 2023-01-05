@@ -63,6 +63,37 @@ const createNewUser = async (req, res) => {
 	}
 };
 
+const getAllUsers = async (req, res) => {
+	const users = await User.find();
+	if (users) {
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			data: users,
+		});
+	} else {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message: "No users is in the database",
+		});
+	}
+};
+
+const getUser = async (req, res) => {
+	const id = req.params.userId;
+	const users = await User.findById(id);
+	if (users) {
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			data: users,
+		});
+	} else {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message: "No user with this id is in the database",
+		});
+	}
+};
+
 const verifyAccount = async (req, res) => {
 	const { id } = req.params;
 	if (!id)
@@ -291,6 +322,8 @@ const activateUser = async (req, res) => {
 
 module.exports = {
 	createNewUser,
+	getAllUsers,
+	getUser,
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,

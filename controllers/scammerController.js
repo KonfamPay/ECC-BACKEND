@@ -87,7 +87,7 @@ const getAllScammers = async (req, res) => {
 	}
 };
 
-const getAScammer = async (req, res) => {
+const getScammer = async (req, res) => {
 	const id = req.params.scammerId;
 	const scammers = await Scammer.findById(id);
 	if (scammers) {
@@ -179,7 +179,7 @@ const deleteScammer = async (req, res) => {
 
 module.exports = {
 	createNewScammer,
-	getAScammer,
+	getScammer,
 	getAllScammers,
 	updateScammer,
 	deleteScammer,
