@@ -18,7 +18,6 @@ const activitySchema = new mongoose.Schema(
 		actionDone: {
 			type: String,
 			enum: [
-				"added_user",
 				"edited_user",
 				"activated_user",
 				"deactivated_user",
@@ -99,7 +98,6 @@ const validateActivity = (activity) => {
 			.min(5)
 			.max(25)
 			.valid(
-				"added_user",
 				"edited_user",
 				"activated_user",
 				"deactivated_user",
