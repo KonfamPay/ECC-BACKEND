@@ -209,7 +209,7 @@ const verifyUserEmail = async (req, res) => {
 	user.emailVerified = true;
 	await user.save();
 
-	await EmailCode.deleteOne({ userId: id });
+	await EmailCode.deleteOne({ userId: id, code });
 	const token = user.generateAuthToken();
 
 	return res
@@ -295,7 +295,7 @@ const activateUser = async (req, res) => {
 	if (!mongoose.Types.ObjectId.isValid(userId))
 		return res
 			.status(StatusCodes.BAD_REQUEST)
-		.json({ status: "fail", message: "This UserId is not valid!" });
+			.json({ status: "fail", message: "This UserId is not valid!" });
 	const user = await User.findById(userId);
 	if (user) {
 		await User.findByIdAndUpdate(
@@ -328,5 +328,5 @@ module.exports = {
 	verifyUserEmail,
 	resendVerifyEmailCode,
 	deactivateUser,
-	activateUser
+	activateUser,
 };
