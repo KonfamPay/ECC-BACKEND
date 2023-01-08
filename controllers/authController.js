@@ -17,6 +17,17 @@ const authenticateUser = async (req, res) => {
 			message:
 				"This email is not registered with any account. Please check the email and try again",
 		});
+
+	if (!user.accountVerified)
+		return res.status(StatusCodes.ACCEPTED).json({
+			accountVerified: user.accountVerified,
+			message: "This user's account has not been verified. Kindly verify!",
+		});
+	if (!user.emailVerified)
+		return res.status(StatusCodes.ACCEPTED).json({
+			accountVerified: user.accountVerified,
+			message: "This user's account has not been verified. Kindly verify!",
+		});
 	if (user && !user.password)
 		return res.status(StatusCodes.BAD_REQUEST).json({
 			message:
