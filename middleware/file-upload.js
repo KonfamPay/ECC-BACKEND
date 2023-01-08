@@ -17,7 +17,7 @@ const uploadFile = async (req, res, next) => {
 			const upload = await cloudinary.uploader.upload(filePath, {
 				public_id: `${Date.now()}`,
 				resource_type: "auto",
-				folder: "images",
+				folder: "files",
 			});
 			fs.unlinkSync(filePath);
 			req.upload = {
