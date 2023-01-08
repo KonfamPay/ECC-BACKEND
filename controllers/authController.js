@@ -28,9 +28,8 @@ const authenticateUser = async (req, res) => {
 			message:
 				"This password does not match the password associated with this account. Kindly check the password and try again",
 		});
-
-	const token = user.generateAuthToken();
-	res.status(StatusCodes.OK).json({ status: "success", user: user._id, token });
+	const data = { id: user._id, email: user.email };
+	return res.status(StatusCodes.OK).json({ status: "success", data });
 };
 
 const signInWithGoogle = async (req, res) => {
