@@ -145,7 +145,7 @@ const veifyAdminLogin = async (req, res) => {
 			message: "This admin does not exist",
 		});
 	const token = "Bearer " + admin.generateAuthToken();
-	// const deleteEmailCode = await EmailCode.findByIdAndDelete(emailCode._id);
+	const deleteEmailCode = await EmailCode.findByIdAndDelete(emailCode._id);
 	res.cookie("api-auth", token, {
 		secure: false,
 		httpOnly: true,
