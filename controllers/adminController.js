@@ -94,6 +94,7 @@ const adminLogin = async (req, res) => {
 
 	// Generate code to send to email
 	const code = Math.floor(1000 + Math.random() * 9000).toString();
+	await EmailCode.deleteMany({ userId: admin._id });
 	const emailCode = new EmailCode({ code, userId: admin._id });
 	const result = await emailCode.save();
 	console.log(emailCode);
@@ -149,7 +150,6 @@ const veifyAdminLogin = async (req, res) => {
 		});
 
 	const token = "Bearer " + admin.generateAuthToken();
-	await EmailCode.deleteMany(emailCode._id);
 
 	res.cookie("api-auth", token, {
 		secure: false,
