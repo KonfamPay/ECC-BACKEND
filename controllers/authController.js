@@ -23,7 +23,7 @@ const authenticateUser = async (req, res) => {
 				"This email is not registered with any account. Please check the email and try again",
 		});
 
-	isUserVerified(user);
+	isUserVerifiedFunc(user);
 
 	const data = { id: user._id, email: user.email };
 
