@@ -97,7 +97,7 @@ const adminLogin = async (req, res) => {
 	const emailCode = new EmailCode({ code, userId: admin._id });
 	const result = await emailCode.save();
 	console.log(emailCode);
-	const link = `${process.env.HOST}/api/admin/login/verify/${admin._id}/${code}`;
+	const link = `${process.env.HOST}/api/admi,n/login/verify/${admin._id}/${code}`;
 	try {
 		sendMail(
 			admin.email,
@@ -127,31 +127,36 @@ const adminLogin = async (req, res) => {
 
 const veifyAdminLogin = async (req, res) => {
 	const adminId = req.params.adminId;
-	const otp = req.params.otp;
+	const code = req.params.otp;
 
 	if (!mongoose.Types.ObjectId.isValid(adminId))
 		return res
 			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "This userId is not valid" });
 
-	let emailCode = await EmailCode.findOne({ otp, userId: adminId });
+	let emailCode = await EmailCode.findOne({ code, userId: adminId });
 	if (!emailCode)
 		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
 			message: "This otp is wrong kindly request another one",
 		});
+
 	let admin = await Admin.findById(adminId);
 	if (!admin)
 		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
 			message: "This admin does not exist",
 		});
+
 	const token = "Bearer " + admin.generateAuthToken();
-	const deleteEmailCode = await EmailCode.findByIdAndDelete(emailCode._id);
+	await EmailCode.deleteMany(emailCode._id);
+
 	res.cookie("api-auth", token, {
 		secure: false,
 		httpOnly: true,
 		expires: dayjs().add(7, "days").toDate(),
 	});
-	res.status(StatusCodes.OK).json({ status: "success", adminId, token });
+	res.status(StatusCodes.OK).json({ status: "success", adminId });
 };
 
 const deleteAdmin = async (req, res) => {
