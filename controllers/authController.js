@@ -6,10 +6,6 @@ const passport = require("passport");
 const mongoose = require("mongoose");
 
 const authenticateUser = async (req, res) => {
-	if (!mongoose.Types.ObjectId.isValid(id))
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ status: "fail", message: "This UserId is not valid!" });
 	const { error } = validate(req.body);
 	if (error)
 		return res
@@ -23,23 +19,8 @@ const authenticateUser = async (req, res) => {
 				"This email is not registered with any account. Please check the email and try again",
 		});
 
-	isUserVerifiedFunc(user);
-
 	const data = { id: user._id, email: user.email };
 
-	if (!user.accountVerified || !user.emailVerified)
-		return res.status(StatusCodes.ACCEPTED).json({
-			accountVerified: user.accountVerified,
-			emailVerified: user.emailVerified,
-			message: "This user's account has not been verified. Kindly verify!",
-			userId: user._id,
-		});
-
-	if (!user.emailVerified)
-		return res.status(StatusCodes.ACCEPTED).json({
-			emailVerified: user.emailVerified,
-			message: "This user's email has not been verified. Kindly verify!",
-		});
 	if (user && !user.password)
 		return res.status(StatusCodes.BAD_REQUEST).json({
 			message:
@@ -51,7 +32,9 @@ const authenticateUser = async (req, res) => {
 			message:
 				"This password does not match the password associated with this account. Kindly check the password and try again",
 		});
-	return res.status(StatusCodes.OK).json({ status: "success", data });
+	if (!isUserVerifiedFunc(req, res, user)) {
+		return res.status(StatusCodes.OK).json({ status: "success", data });
+	}
 };
 
 const signInWithGoogle = async (req, res) => {
@@ -119,27 +102,25 @@ const isUserVerified = async (req, res) => {
 				"This email is not registered with any account. Please check the email and try again",
 		});
 
-	isUserVerifiedFunc(user);
-
 	message = "This user's account and email have been verified 🎉";
 
-	return res.status(StatusCodes.OK).json({
-		status: "success",
-		userId: user._id,
-		emailVerified: user.emailVerified,
-		accountVerified: user.accountVerified,
-		message,
-	});
+	if (!isUserVerifiedFunc(req, res, user)) {
+		return res.status(StatusCodes.OK).json({
+			status: "success",
+			userId: user._id,
+			emailVerified: user.emailVerified,
+			accountVerified: user.accountVerified,
+			message,
+		});
+	}
 };
 
-const isUserVerifiedFunc = (user) => {
+const isUserVerifiedFunc = (req, res, user) => {
 	if (!user.accountVerified || !user.emailVerified) {
-		!user.accountVerified
-			? (message = "This user's account has not been verified. Kindly verify!")
-			: (message = "This user's email has not been verified. Kindly verify!");
-		!user.emailVerified
-			? (message = "This user's email has not been verified. Kindly verify! ")
-			: (message = "This user's account has not been verified. Kindly verify!");
+		!user.accountVerified &&
+			(message = "This user's account has not been verified. Kindly verify!");
+		!user.emailVerified &&
+			(message = "This user's email has not been verified. Kindly verify! ");
 		!user.accountVerified === !user.emailVerified &&
 			(message =
 				"This user's account and email has not been verified. Kindly verify!");

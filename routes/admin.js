@@ -5,7 +5,7 @@ const {
 	getAdminDetails,
 	adminLogin,
 	veifyAdminLogin,
-	deleteAdmin
+	deleteAdmin,
 } = require("../controllers/adminController");
 const { admin, leadAdmin } = require("../middleware/admin");
 
@@ -13,5 +13,5 @@ adminRouter.post("/", leadAdmin, createAdmin);
 adminRouter.get("/dashboard", admin, getAdminDetails);
 adminRouter.post("/login", adminLogin);
 adminRouter.post("/login/verify/:adminId/:otp", veifyAdminLogin);
-adminRouter.delete("/:id", deleteAdmin);
+adminRouter.delete("/:id", leadAdmin, deleteAdmin);
 module.exports = adminRouter;

@@ -34,6 +34,7 @@ const createNewUser = async (req, res) => {
 
 		// Generate code to send to email
 		const code = Math.floor(1000 + Math.random() * 9000).toString();
+		await EmailCode.deleteMany({ userId: user._id });
 		const emailCode = new EmailCode({ code, userId: user._id });
 		const result = await emailCode.save();
 		console.log(emailCode);
@@ -222,16 +223,16 @@ const resendVerifyEmailCode = async (req, res) => {
 	if (!mongoose.Types.ObjectId.isValid(id))
 		return res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ message: "This Id is not valid!" });
+			.json({ status: "fail", message: "This userId is not valid!" });
 
 	const user = await User.findById(id);
 	if (!user)
 		return res
 			.status(StatusCodes.NOT_FOUND)
-			.json({ message: "This user does not exist!" });
+			.json({ status: "fail", message: "This user does not exist!" });
 
 	let emailCode = await EmailCode.findOne({ userId: id });
-	if (emailCode) await EmailCode.deleteOne({ userId: id });
+	await EmailCode.deleteMany({ userId: id });
 
 	// Generate the code to send to the user
 	const code = Math.floor(1000 + Math.random() * 9000).toString();
@@ -248,7 +249,10 @@ const resendVerifyEmailCode = async (req, res) => {
 					if (err) throw new Error("Email failed to send");
 					res
 						.status(StatusCodes.OK)
-						.json({ message: "A new code has been sent to your email" });
+						.json({
+							status: "success",
+							message: "A new code has been sent to your email",
+						});
 				};
 			},
 			res
@@ -256,7 +260,7 @@ const resendVerifyEmailCode = async (req, res) => {
 	} catch (err) {
 		return res
 			.status(StatusCodes.INTERNAL_SERVER_ERROR)
-			.json({ message: "Email failed to send" });
+			.json({ status: "fail", message: "Email failed to send" });
 	}
 };
 

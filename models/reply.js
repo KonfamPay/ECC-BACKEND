@@ -6,14 +6,15 @@ const replySchema = new mongoose.Schema(
 		adminId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Admin",
-			required: true,
+			default: null,
 		},
 		complaintId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Complaint",
 			required: true,
+			default: null,
 		},
-		content: { type: String, required: true },
+		content: { type: String, required: true, default: null },
 		uploadedDocuments: [
 			{
 				documentName: {
@@ -30,6 +31,11 @@ const replySchema = new mongoose.Schema(
 				},
 			},
 		],
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			default: null,
+		},
 	},
 	{ timestamps: true }
 );

@@ -2,11 +2,11 @@ const jwt = require("jsonwebtoken");
 
 const cookieExtractor = (req, res, next) => {
 	let token = null;
-	console.log(
-		"Extracting: ",
-		req.cookies["api-auth"],
-		req.signedCookies["api-auth"]
-	);
+	// console.log(
+	// 	"Extracting: ",
+	// 	req.cookies["api-auth"],
+	// 	req.signedCookies["api-auth"]
+	// );
 	if (req && req.cookies) token = req.cookies["api-auth"];
 	// if (req && req.signedCookies && req.signedCookies.jwt) {
 	//   token = req.signedCookies["jwt"]["token"];
