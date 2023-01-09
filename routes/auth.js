@@ -5,6 +5,7 @@ const {
 	googleCallback,
 	googleSignInSuccessful,
 	googleSignInFailed,
+	isUserVerified,
 } = require("../controllers/authController");
 const authRouter = express.Router();
 
@@ -15,4 +16,5 @@ authRouter.get("/failed", googleSignInFailed);
 authRouter.get("/google/start", (req, res) => {
 	res.redirect("/api/auth/google");
 });
+authRouter.post("/is_verified/:id", isUserVerified);
 module.exports = authRouter;

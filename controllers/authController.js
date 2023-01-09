@@ -3,9 +3,13 @@ const bcrypt = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
 const { User } = require("../models/user");
 const passport = require("passport");
-const { isUserVerified } = require("./usersController");
+const mongoose = require("mongoose");
 
 const authenticateUser = async (req, res) => {
+	if (!mongoose.Types.ObjectId.isValid(id))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ status: "fail", message: "This UserId is not valid!" });
 	const { error } = validate(req.body);
 	if (error)
 		return res
@@ -19,7 +23,7 @@ const authenticateUser = async (req, res) => {
 				"This email is not registered with any account. Please check the email and try again",
 		});
 
-	isUserVerified(user);
+	isUserVerifiedFunc(user);
 
 	const data = { id: user._id, email: user.email };
 
@@ -101,6 +105,54 @@ const googleSignInFailed = async (req, res) => {
 		.json({ message: "Could not log in with google" });
 };
 
+const isUserVerified = async (req, res) => {
+	const { id } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(id))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ status: "fail", message: "This UserId is not valid!" });
+	let user = await User.findById(id);
+	if (!user)
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message:
+				"This email is not registered with any account. Please check the email and try again",
+		});
+
+	isUserVerifiedFunc(user);
+
+	message = "This user's account and email have been verified 🎉";
+
+	return res.status(StatusCodes.OK).json({
+		status: "success",
+		userId: user._id,
+		emailVerified: user.emailVerified,
+		accountVerified: user.accountVerified,
+		message,
+	});
+};
+
+const isUserVerifiedFunc = (user) => {
+	if (!user.accountVerified || !user.emailVerified) {
+		!user.accountVerified
+			? (message = "This user's account has not been verified. Kindly verify!")
+			: (message = "This user's email has not been verified. Kindly verify!");
+		!user.emailVerified
+			? (message = "This user's email has not been verified. Kindly verify! ")
+			: (message = "This user's account has not been verified. Kindly verify!");
+		!user.accountVerified === !user.emailVerified &&
+			(message =
+				"This user's account and email has not been verified. Kindly verify!");
+		return res.status(StatusCodes.OK).json({
+			status: "fail",
+			userId: user._id,
+			emailVerified: user.emailVerified,
+			accountVerified: user.accountVerified,
+			message,
+		});
+	}
+};
+
 const validate = (user) => {
 	const schema = Joi.object({
 		email: Joi.string()
@@ -120,4 +172,5 @@ module.exports = {
 	googleCallback,
 	googleSignInSuccessful,
 	googleSignInFailed,
+	isUserVerified,
 };

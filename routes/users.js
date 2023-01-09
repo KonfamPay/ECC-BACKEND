@@ -7,7 +7,6 @@ const {
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
-	isUserVerified,
 	deactivateUser,
 	activateUser,
 } = require("../controllers/usersController");
@@ -19,7 +18,6 @@ usersRouter.get("/", admin, getAllUsers);
 usersRouter.get("/:userId", auth, getUser);
 usersRouter.post("/verify/:id", verifyAccount);
 usersRouter.post("/verify_email/:id", verifyUserEmail);
-usersRouter.post("/is_verified/:id", isUserVerified);
 usersRouter.post("/verify_email/:id/resend_code", resendVerifyEmailCode);
 usersRouter.post("/deactivate/:id", admin, deactivateUser);
 usersRouter.post("/activate/:id", admin, activateUser);
