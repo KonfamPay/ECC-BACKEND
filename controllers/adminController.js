@@ -135,6 +135,13 @@ const veifyAdminLogin = async (req, res) => {
 			.status(StatusCodes.BAD_REQUEST)
 			.json({ message: "This userId is not valid" });
 
+	let admin = await Admin.findById(adminId);
+	if (!admin)
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message: "This admin does not exist",
+		});
+
 	let emailCode = await EmailCode.findOne({ code, userId: adminId });
 	if (!emailCode)
 		return res.status(StatusCodes.NOT_FOUND).json({
@@ -142,12 +149,7 @@ const veifyAdminLogin = async (req, res) => {
 			message: "This otp is wrong kindly request another one",
 		});
 
-	let admin = await Admin.findById(adminId);
-	if (!admin)
-		return res.status(StatusCodes.NOT_FOUND).json({
-			status: "fail",
-			message: "This admin does not exist",
-		});
+	await EmailCode.deleteMany({ userId: admin._id });
 
 	const token = "Bearer " + admin.generateAuthToken();
 
@@ -157,6 +159,50 @@ const veifyAdminLogin = async (req, res) => {
 		expires: dayjs().add(7, "days").toDate(),
 	});
 	res.status(StatusCodes.OK).json({ status: "success", adminId });
+};
+
+const resendVerifyEmailCode = async (req, res) => {
+	const { id } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(id))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ status: "fail", message: "This adminId is not valid!" });
+
+	const admin = await Admin.findById(id);
+	if (!admin)
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ status: "fail", message: "This admin does not exist!" });
+
+	let emailCode = await EmailCode.findOne({ userId: id });
+	await EmailCode.deleteMany({ userId: id });
+
+	// Generate the code to send to the user
+	const code = Math.floor(1000 + Math.random() * 9000).toString();
+	emailCode = new EmailCode({ code, userId: admin._id });
+	const result = await emailCode.save();
+	console.log(emailCode);
+	try {
+		sendMail(
+			(email = admin.email),
+			(subject = "Verify your Email Address"),
+			(message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1>`),
+			(res) => {
+				return (err, info) => {
+					if (err) throw new Error("Email failed to send");
+					res.status(StatusCodes.OK).json({
+						status: "success",
+						message: "A new code has been sent to your email",
+					});
+				};
+			},
+			res
+		);
+	} catch (err) {
+		return res
+			.status(StatusCodes.INTERNAL_SERVER_ERROR)
+			.json({ status: "fail", message: "Email failed to send" });
+	}
 };
 
 const deleteAdmin = async (req, res) => {
@@ -191,4 +237,5 @@ module.exports = {
 	adminLogin,
 	veifyAdminLogin,
 	deleteAdmin,
+	resendVerifyEmailCode,
 };

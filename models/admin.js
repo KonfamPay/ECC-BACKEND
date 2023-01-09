@@ -44,8 +44,6 @@ adminSchema.methods.generateAuthToken = function () {
 	const token = jwt.sign(
 		{
 			adminId: this._id,
-			name: this.name,
-			phoneNumber: this.phoneNumber,
 			email: this.email,
 			role: this.role,
 		},
