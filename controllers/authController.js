@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
 const { User } = require("../models/user");
 const passport = require("passport");
+const { isUserVerified } = require("./usersController");
 
 const authenticateUser = async (req, res) => {
 	const { error } = validate(req.body);
@@ -18,11 +19,18 @@ const authenticateUser = async (req, res) => {
 				"This email is not registered with any account. Please check the email and try again",
 		});
 
-	if (!user.accountVerified)
+	isUserVerified(user);
+
+	const data = { id: user._id, email: user.email };
+
+	if (!user.accountVerified || !user.emailVerified)
 		return res.status(StatusCodes.ACCEPTED).json({
 			accountVerified: user.accountVerified,
+			emailVerified: user.emailVerified,
 			message: "This user's account has not been verified. Kindly verify!",
+			userId: user._id,
 		});
+
 	if (!user.emailVerified)
 		return res.status(StatusCodes.ACCEPTED).json({
 			emailVerified: user.emailVerified,
@@ -39,7 +47,6 @@ const authenticateUser = async (req, res) => {
 			message:
 				"This password does not match the password associated with this account. Kindly check the password and try again",
 		});
-	const data = { id: user._id, email: user.email };
 	return res.status(StatusCodes.OK).json({ status: "success", data });
 };
 
