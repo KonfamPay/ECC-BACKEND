@@ -260,6 +260,33 @@ const resendVerifyEmailCode = async (req, res) => {
 	}
 };
 
+const isUserVerified = async (req, res) => {
+	const { id } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(id))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ status: "fail", message: "This UserId is not valid!" });
+	let user = await User.findById(id);
+	if (!user)
+		return res.status(StatusCodes.NOT_FOUND).json({
+			status: "fail",
+			message:
+				"This email is not registered with any account. Please check the email and try again",
+		});
+
+	isUserVerifiedFunc(user);
+
+	message = "This user's account and email have been verified 🎉";
+
+	return res.status(StatusCodes.OK).json({
+		status: "success",
+		userId: user._id,
+		emailVerified: user.emailVerified,
+		accountVerified: user.accountVerified,
+		message,
+	});
+};
+
 const deactivateUser = async (req, res) => {
 	const userId = req.params.id;
 	if (!mongoose.Types.ObjectId.isValid(userId))
@@ -320,6 +347,27 @@ const activateUser = async (req, res) => {
 	}
 };
 
+const isUserVerifiedFunc = (user) => {
+	if (!user.accountVerified || !user.emailVerified) {
+		!user.accountVerified
+			? (message = "This user's account has not been verified. Kindly verify!")
+			: (message = "This user's email has not been verified. Kindly verify!");
+		!user.emailVerified
+			? (message = "This user's email has not been verified. Kindly verify! ")
+			: (message = "This user's account has not been verified. Kindly verify!");
+		!user.accountVerified === !user.emailVerified &&
+			(message =
+				"This user's account and email has not been verified. Kindly verify!");
+		return res.status(StatusCodes.OK).json({
+			status: "fail",
+			userId: user._id,
+			emailVerified: user.emailVerified,
+			accountVerified: user.accountVerified,
+			message,
+		});
+	}
+};
+
 module.exports = {
 	createNewUser,
 	getAllUsers,
@@ -327,6 +375,8 @@ module.exports = {
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
+	isUserVerified,
 	deactivateUser,
 	activateUser,
+	isUserVerifiedFunc,
 };
