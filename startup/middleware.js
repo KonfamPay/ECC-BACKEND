@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
+const MemoryStore = require("memorystore")(session);
 
 const trimmer = (req, res, next) => {
 	if (req.method === "POST") {
@@ -24,7 +25,15 @@ module.exports = (app) => {
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
 	app.use(logger("dev"));
-	app.use(session({ secret: process.env.SESSION_SECRET }));
+	app.use(
+		session({
+			cookie: { maxAge: 86400000 },
+			store: new MemoryStore({
+				checkPeriod: 86400000, // prune expired entries every 24h
+			}),
+			secret: process.env.SESSION_SECRET,
+		})
+	);
 	app.use(passport.initialize());
 	app.use(express.static("public"));
 	app.set("view engine", "ejs");
