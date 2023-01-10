@@ -164,17 +164,18 @@ const resendVerifyEmailCode = async (req, res) => {
 			.json({ status: "fail", message: "This adminId is not valid!" });
 
 	let admin = await Admin.findOne({ _id: id });
+	console.log(admin);
 	if (!admin)
 		return res
 			.status(StatusCodes.NOT_FOUND)
 			.json({ status: "fail", message: "This admin does not exist!" });
-	// console.log(admin._id);
+	const adminId = admin._id.valueOf();
 	const code = Math.floor(1000 + Math.random() * 9000).toString();
 	await EmailCode.deleteMany({ userId: admin._id });
-	const emailCode = new EmailCode({ code, userId: admin._id });
+	const emailCode = new EmailCode({ code, userId: adminId });
 	const result = await emailCode.save();
 	console.log(emailCode);
-	const link = `${process.env.HOST}/api/admiin/login/verify/${admin._id}/${code}`;
+	const link = `${process.env.HOST}/api/admiin/login/verify/${adminId}/${code}`;
 	try {
 		sendMail(
 			admin.email,
