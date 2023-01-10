@@ -157,76 +157,24 @@ const veifyAdminLogin = async (req, res) => {
 };
 
 const resendVerifyEmailCode = async (req, res) => {
-	// const { id } = req.params;
-	// if (!mongoose.Types.ObjectId.isValid(id))
-	// 	return res
-	// 		.status(StatusCodes.BAD_REQUEST)
-	// 		.json({ status: "fail", message: "This adminId is not valid!" });
-
-	// const admin = await Admin.findOne({ _id: id });
-	// if (!admin)
-	// 	return res
-	// 		.status(StatusCodes.NOT_FOUND)
-	// 		.json({ status: "fail", message: "This admin does not exist!" });
-	// // console.log(admin._id);
-	// const code = Math.floor(1000 + Math.random() * 9000).toString();
-	// await EmailCode.deleteMany({ userId: admin._id });
-	// const emailCode = new EmailCode({ code, userId: admin._id });
-	// const result = await emailCode.save();
-	// console.log(emailCode);
-	// const link = `${process.env.HOST}/api/admiin/login/verify/${admin._id}/${code}`;
-	// try {
-	// 	sendMail(
-	// 		admin.email,
-	// 		(subject = "OTP To Login to your Konfampay Admin Account"),
-	// 		(message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1><p>Or Login using this link: <br>${link}</p>`),
-	// 		(res) => {
-	// 			return (err, info) => {
-	// 				if (err) throw new Error("Email failed to send");
-	// 				res
-	// 					.status(StatusCodes.OK)
-	// 					.json({ status: "success", message: "Email has been sent" });
-	// 			};
-	// 		},
-	// 		res
-	// 	);
-	// } catch (err) {
-	// 	return res
-	// 		.status(StatusCodes.INTERNAL_SERVER_ERROR)
-	// 		.json({ status: "fail", message: "Email failed to send" });
-	// }
 	const { id } = req.params;
-	// const { error } = validateAdmin(req.body);
-	// if (error)
-	// 	return res
-	// 		.status(StatusCodes.BAD_REQUEST)
-	// 		.json({ message: error.details[0].message });
+	if (!mongoose.Types.ObjectId.isValid(id))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ status: "fail", message: "This adminId is not valid!" });
 
-	let admin = await Admin.findOne({ id });
+	const admin = await Admin.findOne({ _id: id });
 	if (!admin)
-		return res.status(StatusCodes.NOT_FOUND).json({
-			message:
-				"This email is not registered with any account. Please check the email and try again",
-		});
-	// const data = {
-	// 	id: admin._id,
-	// 	email: admin.email,
-	// 	role: admin.role,
-	// };
-	// const validPassword = await bcrypt.compare(req.body.password, admin.password);
-	// if (!validPassword)
-	// 	return res.status(StatusCodes.BAD_REQUEST).json({
-	// 		message:
-	// 			"This password does not match the password associated with admin. Kindly check the password and try again",
-	// 	});
-
-	// Generate code to send to email
+		return res
+			.status(StatusCodes.NOT_FOUND)
+			.json({ status: "fail", message: "This admin does not exist!" });
+	// console.log(admin._id);
 	const code = Math.floor(1000 + Math.random() * 9000).toString();
 	await EmailCode.deleteMany({ userId: admin._id });
 	const emailCode = new EmailCode({ code, userId: admin._id });
 	const result = await emailCode.save();
 	console.log(emailCode);
-	const link = `${process.env.HOST}/api/admin/login/verify/${admin._id}/${code}`;
+	const link = `${process.env.HOST}/api/admiin/login/verify/${admin._id}/${code}`;
 	try {
 		sendMail(
 			admin.email,
