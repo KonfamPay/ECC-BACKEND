@@ -37,18 +37,18 @@ const createNewUser = async (req, res) => {
 		await EmailCode.deleteMany({ userId: user._id });
 		const emailCode = new EmailCode({ code, userId: user._id });
 		const result = await emailCode.save();
-		console.log(emailCode);
+		const link = `${process.env.HOST}/api/admi,n/login/verify/${user._id}/${code}`;
 		try {
 			sendMail(
-				email,
-				(subject = "Verify your Email Address"),
-				(message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1>`),
+				user.email,
+				(subject = "OTP To Login to your Konfampay User Account"),
+				(message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1><p>Or Login using this link: <br>${link}</p>`),
 				(res) => {
 					return (err, info) => {
 						if (err) throw new Error("Email failed to send");
-						console.log(user);
-						const token = user.generateAuthToken();
-						res.status(StatusCodes.CREATED).json({ token });
+						res
+							.status(StatusCodes.OK)
+							.json({ status: "success", message: "Email has been sent" });
 					};
 				},
 				res
@@ -56,7 +56,7 @@ const createNewUser = async (req, res) => {
 		} catch (err) {
 			return res
 				.status(StatusCodes.INTERNAL_SERVER_ERROR)
-				.json({ message: "Email failed to send" });
+				.json({ status: "fail", message: "Email failed to send" });
 		}
 		return res.status(StatusCodes.CREATED).json({ code, user });
 	} catch (error) {
@@ -231,28 +231,23 @@ const resendVerifyEmailCode = async (req, res) => {
 			.status(StatusCodes.NOT_FOUND)
 			.json({ status: "fail", message: "This user does not exist!" });
 
-	let emailCode = await EmailCode.findOne({ userId: id });
-	await EmailCode.deleteMany({ userId: id });
-
 	// Generate the code to send to the user
 	const code = Math.floor(1000 + Math.random() * 9000).toString();
-	emailCode = new EmailCode({ code, userId: user._id });
+	await EmailCode.deleteMany({ userId: user._id });
+	const emailCode = new EmailCode({ code, userId: user._id });
 	const result = await emailCode.save();
-	console.log(emailCode);
+	const link = `${process.env.HOST}/api/admi,n/login/verify/${user._id}/${code}`;
 	try {
 		sendMail(
-			(email = user.email),
-			(subject = "Verify your Email Address"),
-			(message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1>`),
+			user.email,
+			(subject = "OTP To Login to your Konfampay User Account"),
+			(message = `<p>Use this code to verify your email address:</p> <h1>${code}</h1><p>Or Login using this link: <br>${link}</p>`),
 			(res) => {
 				return (err, info) => {
 					if (err) throw new Error("Email failed to send");
 					res
 						.status(StatusCodes.OK)
-						.json({
-							status: "success",
-							message: "A new code has been sent to your email",
-						});
+						.json({ status: "success", message: "Email has been sent" });
 				};
 			},
 			res
