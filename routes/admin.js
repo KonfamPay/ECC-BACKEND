@@ -2,7 +2,7 @@ const express = require("express");
 const adminRouter = express.Router();
 const {
 	resendVerifyEmailCode,
-} = require("../controllers/adminController");
+} = require("../controllers/adcon");
 // const { admin, leadAdmin } = require("../middleware/admin");
 
 adminRouter.post("/verify_email/:id/resend_code", resendVerifyEmailCode);
