@@ -13,7 +13,7 @@ const resendVerifyEmailCode = async (req, res) => {
 			.status(StatusCodes.BAD_REQUEST)
 			.json({ status: "fail", message: "This adminId is not valid!" });
 
-	const admin = await Admin.findOne({ _id: id });
+	let admin = await Admin.findOne({ _id: id });
 	if (!admin)
 		return res
 			.status(StatusCodes.NOT_FOUND)
