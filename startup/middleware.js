@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
+const MemoryStore = require("memorystore")(session);
 
 const trimmer = (req, res, next) => {
 	if (req.method === "POST") {
