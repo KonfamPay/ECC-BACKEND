@@ -163,12 +163,12 @@ const resendVerifyEmailCode = async (req, res) => {
 			.status(StatusCodes.BAD_REQUEST)
 			.json({ status: "fail", message: "This adminId is not valid!" });
 
-	const admin = await Admin.findById(id);
+	const admin = await Admin.findOne({ _id: id });
 	if (!admin)
 		return res
 			.status(StatusCodes.NOT_FOUND)
 			.json({ status: "fail", message: "This admin does not exist!" });
-
+	// console.log(admin._id);
 	const code = Math.floor(1000 + Math.random() * 9000).toString();
 	await EmailCode.deleteMany({ userId: admin._id });
 	const emailCode = new EmailCode({ code, userId: admin._id });
