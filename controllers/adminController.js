@@ -98,7 +98,7 @@ const adminLogin = async (req, res) => {
 	const emailCode = new EmailCode({ code, userId: admin._id });
 	const result = await emailCode.save();
 	console.log(emailCode);
-	const link = `${process.env.HOST}/api/admi,n/login/verify/${admin._id}/${code}`;
+	const link = `${process.env.HOST}/api/admin/login/verify/${admin._id}/${code}`;
 	try {
 		sendMail(
 			admin.email,

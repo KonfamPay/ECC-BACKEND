@@ -37,7 +37,7 @@ const createNewUser = async (req, res) => {
 		await EmailCode.deleteMany({ userId: user._id });
 		const emailCode = new EmailCode({ code, userId: user._id });
 		const result = await emailCode.save();
-		const link = `${process.env.HOST}/api/admi,n/login/verify/${user._id}/${code}`;
+		const link = `${process.env.HOST}/api/user/login/verify/${user._id}/${code}`;
 		try {
 			sendMail(
 				user.email,
@@ -236,7 +236,7 @@ const resendVerifyEmailCode = async (req, res) => {
 	await EmailCode.deleteMany({ userId: user._id });
 	const emailCode = new EmailCode({ code, userId: user._id });
 	const result = await emailCode.save();
-	const link = `${process.env.HOST}/api/admi,n/login/verify/${user._id}/${code}`;
+	const link = `${process.env.HOST}/api/user/login/verify/${user._id}/${code}`;
 	try {
 		sendMail(
 			user.email,
