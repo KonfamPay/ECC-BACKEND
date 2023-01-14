@@ -12,6 +12,7 @@ const complaints = require("../routes/complaint");
 const reply = require("../routes/reply");
 const scammer = require("../routes/scammer");
 const scam = require("../routes/scam");
+const letter = require("../routes/letter");
 
 module.exports = (app) => {
 	app.use("/api/admin", admin);
@@ -26,6 +27,7 @@ module.exports = (app) => {
 	app.use("/api/scammer", scammer);
 	app.use("/api/scam", scam);
 	app.use("/api/notifications", notifications);
+	app.use("/api/letter", letter);
 	app.get("*", (req, res) => {
 		res.sendStatus(StatusCodes.NOT_FOUND);
 	});

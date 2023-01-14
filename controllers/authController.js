@@ -4,6 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const { User } = require("../models/user");
 const passport = require("passport");
 const mongoose = require("mongoose");
+const dayjs = require("dayjs");
 
 const authenticateUser = async (req, res) => {
 	const { error } = validate(req.body);
@@ -26,13 +27,21 @@ const authenticateUser = async (req, res) => {
 			message:
 				"This account was created using a social option. Kindly sign in with Google or Twitter.",
 		});
+
 	const validPassword = await bcrypt.compare(req.body.password, user.password);
 	if (!validPassword)
 		return res.status(StatusCodes.BAD_REQUEST).json({
 			message:
 				"This password does not match the password associated with this account. Kindly check the password and try again",
 		});
+
+	const token = "Bearer " + user.generateAuthToken();
 	if (!isUserVerifiedFunc(req, res, user)) {
+		res.cookie("api-auth", token, {
+			secure: false,
+			httpOnly: true,
+			expires: dayjs().add(7, "days").toDate(),
+		});
 		return res.status(StatusCodes.OK).json({ status: "success", data });
 	}
 };

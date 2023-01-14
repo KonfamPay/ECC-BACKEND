@@ -147,7 +147,6 @@ const veifyAdminLogin = async (req, res) => {
 	await EmailCode.deleteMany({ userId: admin._id });
 
 	const token = "Bearer " + admin.generateAuthToken();
-
 	res.cookie("api-auth", token, {
 		secure: false,
 		httpOnly: true,
