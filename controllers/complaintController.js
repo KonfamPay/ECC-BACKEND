@@ -158,17 +158,25 @@ const getComplaintNumbers = async (req, res) => {
 };
 
 const updateComplaintStatus = async (req, res) => {
-	const { complaintId, status } = req.body;
+	const { complaintId, status, isScam = false } = req.body;
+
+	if (!mongoose.Types.ObjectId.isValid(complaintId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This complaintId is not valid" });
+			
 	const complaint = await Complaint.findOneAndUpdate(
 		{ complaintId },
-		{ status }
+		{ status, isScam }
 	);
+	
 	await ActivityService.addActivity({
 		adminId: req.admin.adminId,
 		actionType: "complaint",
 		actionDone: "updated_complaint_status",
 		complaintId,
 	});
+	
 	return res.status(StatusCodes.OK).json({
 		message: `Complaint with id ${complaintId} has its status to be updated as ${status}`,
 	});
@@ -191,8 +199,14 @@ const getAllComplaints = async (req, res) => {
 
 const deleteComplaint = async (req, res) => {
 	const { id: complaintId } = req.params;
+
+	if (!mongoose.Types.ObjectId.isValid(complaintId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This complaintId is not valid" });
+
 	const complaint = await Complaint.findOneAndDelete({ complaintId });
-	console.log(req.admin);
+
 	await ActivityService.addActivity({
 		adminId: req.admin.adminId,
 		actionType: "complaint",

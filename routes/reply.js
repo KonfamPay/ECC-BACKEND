@@ -8,8 +8,8 @@ const {
 const { admin } = require("../middleware/admin");
 const auth = require("../middleware/auth");
 
-replyRouter.post("/admin/:id", admin, adminCreateAComplaintReply);
-replyRouter.post("/user/:id", auth, userCreateAComplaintReply);
+replyRouter.post("/admin/:complaintId", admin, adminCreateAComplaintReply);
+replyRouter.post("/user/:complaintId", auth, userCreateAComplaintReply);
 replyRouter.delete("/:complaintId/:replyId", admin, deleteReply);
 
 module.exports = replyRouter;
