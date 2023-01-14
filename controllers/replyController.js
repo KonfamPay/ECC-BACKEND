@@ -9,7 +9,7 @@ const { NotificationService } = require("./notificationController");
 const adminCreateAComplaintReply = async (req, res) => {
 	const { adminId } = req.admin;
 	const { content } = req.body;
-	const { id: complaintId } = req.params;
+	const { complaintId } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(complaintId)) {
 		throw new Error("Invalid complaint request Id");
@@ -66,7 +66,7 @@ const adminCreateAComplaintReply = async (req, res) => {
 const userCreateAComplaintReply = async (req, res) => {
 	const { userId } = req.user;
 	const { content } = req.body;
-	const { id: complaintId } = req.params;
+	const { complaintId } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(complaintId)) {
 		throw new Error("Invalid complaint request Id");
