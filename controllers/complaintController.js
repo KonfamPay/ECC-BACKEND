@@ -158,10 +158,14 @@ const getComplaintNumbers = async (req, res) => {
 };
 
 const updateComplaintStatus = async (req, res) => {
-	const { complaintId, status } = req.body;
+	const { complaintId, status, isScam = false } = req.body;
+	if (!mongoose.Types.ObjectId.isValid(complaintId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This complaintId is not valid" });
 	const complaint = await Complaint.findOneAndUpdate(
 		{ complaintId },
-		{ status }
+		{ status, isScam }
 	);
 	await ActivityService.addActivity({
 		adminId: req.admin.adminId,
