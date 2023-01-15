@@ -2,6 +2,7 @@ const express = require("express");
 const {
 	createComplaintLetter,
 	getAllLetters,
+	getALetter,
 	getAllLettersByAUser,
 	deleteLetter,
 } = require("../controllers/letterController");
@@ -10,8 +11,9 @@ const auth = require("../middleware/auth");
 const letterRouter = express.Router();
 
 letterRouter.post("/", auth, createComplaintLetter);
-letterRouter.get("/", getAllLetters);
-letterRouter.get("/:userId", auth, getAllLettersByAUser);
+letterRouter.get("/", auth, getAllLetters);
+letterRouter.get("/:id", auth, getALetter);
+letterRouter.get("/user/:userId", auth, getAllLettersByAUser);
 letterRouter.delete("/:id", admin, deleteLetter);
 
 module.exports = letterRouter;
