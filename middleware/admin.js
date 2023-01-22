@@ -56,7 +56,6 @@ const admin = async (req, res, next) => {
 		};
 		next();
 	} catch (error) {
-		console.log(error);
 		throw new Error("Authentication invalid");
 	}
 };
