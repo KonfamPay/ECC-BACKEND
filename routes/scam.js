@@ -10,7 +10,7 @@ const { admin, leadAdmin } = require("../middleware/admin");
 
 scamRouter.post("/create/:scammerId", admin, createNewScamReport);
 // scamRouter.put("/:scamId", admin, updateScammer);
-scamRouter.get("/", getAllScams);
+scamRouter.get("/", admin, getAllScams);
 scamRouter.get("/:scamId", admin, getScam);
 scamRouter.delete("/:scamId", leadAdmin, deleteNewScamReport);
 
