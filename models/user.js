@@ -101,6 +101,7 @@ userSchema.methods.generateAuthToken = function () {
 			userId: this._id,
 			name: this.firstName + this.lastName,
 			profilePic: this.profilePic,
+			email: this.email
 		},
 		process.env.JWT_PRIVATE_KEY,
 		{

@@ -20,8 +20,6 @@ const authenticateUser = async (req, res) => {
 				"This email is not registered with any account. Please check the email and try again",
 		});
 
-	const data = { id: user._id, email: user.email };
-
 	if (user && !user.password)
 		return res.status(StatusCodes.BAD_REQUEST).json({
 			message:
@@ -35,14 +33,14 @@ const authenticateUser = async (req, res) => {
 				"This password does not match the password associated with this account. Kindly check the password and try again",
 		});
 
-	const token = "Bearer " + user.generateAuthToken();
+	const token = user.generateAuthToken();
 	if (!isUserVerifiedFunc(req, res, user)) {
 		res.cookie("api-auth", token, {
 			secure: false,
 			httpOnly: true,
 			expires: dayjs().add(7, "days").toDate(),
 		});
-		return res.status(StatusCodes.OK).json({ status: "success", data });
+		return res.status(StatusCodes.OK).json({ status: "success", token });
 	}
 };
 
