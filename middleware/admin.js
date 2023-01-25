@@ -2,15 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const cookieExtractor = (req, res, next) => {
 	let token = null;
-	// console.log(
-	// 	"Extracting: ",
-	// 	req.cookies["api-auth"],
-	// 	req.signedCookies["api-auth"]
-	// );
 	if (req && req.cookies) token = req.cookies["api-auth"];
-	// if (req && req.signedCookies && req.signedCookies.jwt) {
-	//   token = req.signedCookies["jwt"]["token"];
-	// }
 	return token;
 };
 
@@ -33,7 +25,7 @@ const leadAdmin = async (req, res, next) => {
 		};
 		next();
 	} catch (error) {
-		throw new Error("Authentication invalid");
+		throw new Error("Could not authenticate admin");
 	}
 };
 
@@ -56,7 +48,7 @@ const admin = async (req, res, next) => {
 		};
 		next();
 	} catch (error) {
-		throw new Error("Authentication invalid");
+		throw new Error("Could not authenticate admin");
 	}
 };
 

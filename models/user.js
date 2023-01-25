@@ -99,7 +99,8 @@ userSchema.methods.generateAuthToken = function () {
 	const token = jwt.sign(
 		{
 			userId: this._id,
-			name: this.firstName + " " + this.lastName,
+			firstName: this.firstName,
+			lastName: this.lastName, 
 			profilePic: this.profilePic,
 			email: this.email,
 		},

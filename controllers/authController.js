@@ -33,7 +33,7 @@ const authenticateUser = async (req, res) => {
 				"This password does not match the password associated with this account. Kindly check the password and try again",
 		});
 
-	const token = user.generateAuthToken();
+	const token = "Bearer " + user.generateAuthToken();
 	if (!isUserVerifiedFunc(req, res, user)) {
 		res.cookie("api-auth", token, {
 			secure: false,
