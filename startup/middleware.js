@@ -37,7 +37,15 @@ module.exports = (app) => {
 	app.use(passport.initialize());
 	app.use(express.static("public"));
 	app.set("view engine", "ejs");
-	app.use(cors());
+	app.use(function (req, res, next) {
+		res.header("Access-Control-Allow-Headers", "Cookie");
+		next();
+	});
+	app.use(function (req, res, next) {
+		res.header("Access-Control-Allow-Headers", "*");
+		next();
+	});
+	app.use(cors({ credentials: true, origin: true }));
 	app.use(helmet());
 	app.use(trimmer);
 	app.use(

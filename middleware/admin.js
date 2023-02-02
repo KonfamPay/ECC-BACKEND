@@ -2,7 +2,9 @@ const jwt = require("jsonwebtoken");
 
 const cookieExtractor = (req, res, next) => {
 	let token = null;
-	if (req && req.cookies) token = req.cookies["api-auth"];
+	// if (req && req.cookies) token = req.cookies["api-auth"];
+	// if (req && req.body.cookie) token = req.body.cookie;
+	token = req.headers.authorization;
 	return token;
 };
 
