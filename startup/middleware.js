@@ -8,6 +8,8 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const MemoryStore = require("memorystore")(session);
+const notFoundMiddleware = require("../middleware/not-found");
+const errorHandlerMiddleware = require("../middleware/error-handler");
 
 const trimmer = (req, res, next) => {
 	if (req.method === "POST") {
@@ -54,4 +56,8 @@ module.exports = (app) => {
 			limits: { fileSize: 50 * 1024 * 1024 },
 		})
 	);
+
+	// error handler
+	app.use(notFoundMiddleware);
+	app.use(errorHandlerMiddleware);
 };
