@@ -9,6 +9,7 @@ const { sendMail } = require("../utils/node-mailer-transport");
 const { EmailCode, validateEmailCode } = require("../models/emailCode");
 const { NotificationService } = require("./notificationController");
 const { StatusCodes } = require("http-status-codes");
+const jwt = require("jsonwebtoken");
 
 const createNewUser = async (req, res) => {
 	try {
@@ -259,6 +260,54 @@ const resendVerifyEmailCode = async (req, res) => {
 	}
 };
 
+const updateUserDetails = async (req, res) => {
+	const { firstName, lastName, middleName, email, dob, address, state } =
+		req.body;
+	const data = { firstName, lastName, middleName, email, dob, address, state };
+	const userId = req.params.id;
+
+	if (!mongoose.Types.ObjectId.isValid(userId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This userId is not valid" });
+
+	if (!(req.user.userId === userId)) {
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "You are not allowed to update this user's details" });
+	}
+
+	await User.findOneAndUpdate({ userId }, data);
+
+	return res.status(StatusCodes.OK).json({
+		status: "success",
+		message: "Your details have been updated successfully",
+	});
+};
+
+const updateUserProfilePic = async (req, res) => {
+	const { profilePic } = req.body;
+	const userId = req.params.id;
+
+	if (!mongoose.Types.ObjectId.isValid(userId))
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "This userId is not valid" });
+
+	if (!(req.user.userId === userId)) {
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "You are not allowed to update this user's details" });
+	}
+
+	await User.findOneAndUpdate({ userId }, data);
+
+	return res.status(StatusCodes.OK).json({
+		status: "success",
+		message: "Your details have been updated successfully",
+	});
+};
+
 const deactivateUser = async (req, res) => {
 	const userId = req.params.id;
 	if (!mongoose.Types.ObjectId.isValid(userId))
@@ -326,6 +375,8 @@ module.exports = {
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
+	updateUserDetails,
+	updateUserProfilePic,
 	deactivateUser,
 	activateUser,
 };

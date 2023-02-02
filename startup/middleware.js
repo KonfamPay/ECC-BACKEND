@@ -52,12 +52,14 @@ module.exports = (app) => {
 	app.use(trimmer);
 	app.use(
 		fileUpload({
-			useTempFiles: true,
-			limits: { fileSize: 50 * 1024 * 1024 },
+			limits: {
+				fileSize: 5 * 1024 * 1024, //5MB
+			},
+			abortOnLimit: true,
 		})
 	);
 
 	// error handler
-	app.use(notFoundMiddleware);
-	app.use(errorHandlerMiddleware);
+	// app.use(notFoundMiddleware);
+	// app.use(errorHandlerMiddleware);
 };

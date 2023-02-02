@@ -7,6 +7,8 @@ const {
 	verifyAccount,
 	verifyUserEmail,
 	resendVerifyEmailCode,
+	updateUserDetails,
+	updateUserProfilePic,
 	deactivateUser,
 	activateUser,
 } = require("../controllers/usersController");
@@ -19,6 +21,8 @@ usersRouter.get("/:userId", auth, getUser);
 usersRouter.post("/verify/:id", verifyAccount);
 usersRouter.post("/verify_email/:id", verifyUserEmail);
 usersRouter.post("/verify_email/:id/resend_code", resendVerifyEmailCode);
+usersRouter.patch("/:id", auth, updateUserDetails);
+usersRouter.patch("/profile/:id", auth, updateUserProfilePic);
 usersRouter.post("/deactivate/:id", admin, deactivateUser);
 usersRouter.post("/activate/:id", admin, activateUser);
 

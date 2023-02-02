@@ -3,13 +3,8 @@ const { cookieExtractor } = require("./admin");
 
 const auth = async (req, res, next) => {
 	let token = cookieExtractor(req, res, next);
-	if (!token || !token.startsWith("Bearer")) {
-		throw new Error("Authentication invalid");
-	}
-	token = token.split(" ")[1];
 	try {
 		const payload = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-		console.log(payload)
 		req.user = {
 			userId: payload.userId,
 			firstName: payload.firstName,
