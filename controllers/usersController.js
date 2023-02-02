@@ -286,8 +286,8 @@ const updateUserDetails = async (req, res) => {
 };
 
 const updateUserProfilePic = async (req, res) => {
-	const { profilePic } = req.body;
 	const userId = req.params.id;
+	const { public_id: profilePicCloudinaryId, url: profilePicUrl } = req.upload;
 
 	if (!mongoose.Types.ObjectId.isValid(userId))
 		return res
@@ -297,14 +297,18 @@ const updateUserProfilePic = async (req, res) => {
 	if (!(req.user.userId === userId)) {
 		return res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ message: "You are not allowed to update this user's details" });
+			.json({ message: "You cannot update this user's profile icon" });
 	}
 
-	await User.findOneAndUpdate({ userId }, data);
+	await User.findOneAndUpdate(
+		{ userId },
+		{ profilePicUrl, profilePicCloudinaryId }
+	);
 
 	return res.status(StatusCodes.OK).json({
 		status: "success",
-		message: "Your details have been updated successfully",
+		message: "Your profile picture have been updated successfully",
+		data: { profilePicUrl, profilePicCloudinaryId },
 	});
 };
 

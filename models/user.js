@@ -51,10 +51,17 @@ const userSchema = new mongoose.Schema(
 			required: false,
 			type: String,
 		},
-		profilePic: {
-			required: false,
+		profilePicUrl: {
 			type: String,
-			default: "",
+			required: false,
+			maxlength: 255,
+			default: null,
+		},
+		profilePicCloudinaryId: {
+			type: String,
+			required: false,
+			maxlength: 255,
+			default: null,
 		},
 		dob: {
 			required: false,
