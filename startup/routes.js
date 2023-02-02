@@ -6,13 +6,14 @@ const activity = require("../routes/activity");
 const forgotPassword = require("../routes/forgot-password");
 const resetPassword = require("../routes/reset-password");
 const error = require("../middleware/error");
-const image = require("../routes/image");
 const notifications = require("../routes/notifications");
 const complaints = require("../routes/complaint");
 const reply = require("../routes/reply");
 const scammer = require("../routes/scammer");
 const scam = require("../routes/scam");
 const letter = require("../routes/letter");
+const notFoundMiddleware = require("../middleware/not-found");
+const errorHandlerMiddleware = require("../middleware/error-handler");
 
 module.exports = (app) => {
 	app.use("/api/admin", admin);
@@ -21,7 +22,6 @@ module.exports = (app) => {
 	app.use("/api/auth", auth);
 	app.use("/api/forgot-password", forgotPassword);
 	app.use("/api/reset-password", resetPassword);
-	app.use("/api/image", image);
 	app.use("/api/complaints", complaints);
 	app.use("/api/reply", reply);
 	app.use("/api/scammer", scammer);
@@ -31,5 +31,9 @@ module.exports = (app) => {
 	app.get("*", (req, res) => {
 		res.sendStatus(StatusCodes.NOT_FOUND);
 	});
+
+	// error handler
+	app.use(notFoundMiddleware);
+	app.use(errorHandlerMiddleware);
 	app.use(error);
 };

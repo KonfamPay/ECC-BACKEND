@@ -1,21 +1,17 @@
-const { cloudinary } = require("../utils/cloudinary");
+const cloudinary = require("../utils/cloudinary");
 const BadRequestError = require("../errors/bad-request");
 const fs = require("fs");
 
-const uploaeDocument = async (req, res, next) => {
+const uploadDocument = async (req, res, next) => {
 	try {
 		if (req.files) {
 			const file = req.files.myFile;
-			const filePath = "./tmp/" + file.name;
-			file.mv(filePath, function (err) {
-				if (err) throw new BadRequestError("Failed to move the image");
-			});
-			const upload = await cloudinary.uploader.upload(filePath, {
+			const upload = await cloudinary.uploader.upload(file.tempFilePath, {
 				public_id: `${Date.now()}`,
 				resource_type: "auto",
 				folder: "images",
 			});
-			fs.unlinkSync(filePath);
+			fs.unlinkSync(file.tempFilePath);
 			req.upload = {
 				public_id: upload.public_id,
 				url: upload.url,
@@ -28,7 +24,7 @@ const uploaeDocument = async (req, res, next) => {
 		}
 		next();
 	} catch (err) {
-		throw new BadRequestError({ message: "Failed to upload the image" });
+		throw new BadRequestError("Failed to upload the image");
 	}
 };
 
@@ -41,4 +37,4 @@ const deleteDocument = async (req, res, next) => {
 		throw new Error({ message: "Failed to delete the image" });
 	}
 };
-module.exports = { uploaeDocument, deleteDocument };
+module.exports = { uploadDocument, deleteDocument };
