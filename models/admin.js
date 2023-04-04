@@ -57,7 +57,7 @@ adminSchema.methods.generateAuthToken = function () {
 
 const Admin = mongoose.model("Admin", adminSchema);
 
-// Function for validating before persisting anything to the db
+// Function for validating before persisting to the db
 const validateAdmin = (admin) => {
 	const schema = Joi.object({
 		email: Joi.string()
