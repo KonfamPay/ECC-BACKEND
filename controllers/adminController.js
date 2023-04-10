@@ -107,9 +107,11 @@ const adminLogin = async (req, res) => {
 			(res) => {
 				return (err, info) => {
 					if (err) throw new Error("Email failed to send");
-					res
-						.status(StatusCodes.OK)
-						.json({ status: "success", message: "Email has been sent" });
+					res.status(StatusCodes.OK).json({
+						status: "success",
+						message: "Email has been sent",
+						adminId: admin._id,
+					});
 				};
 			},
 			res
